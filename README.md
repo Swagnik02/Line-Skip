@@ -21,6 +21,10 @@ LineSkip is a mobile application that enhances the shopping experience by allowi
 3. **Real-Time Monitoring**: Track the weight of the trolley to ensure all items are scanned.
 4. **Secure Checkout**: Complete your purchase through the app and receive a digital receipt.
 
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/0a795729-b051-480f-8c09-b31f3a3a563a" alt="Workflow" width="500">
+</div>
+
 ---
 
 ## Technologies Used
@@ -56,12 +60,12 @@ LineSkip is a mobile application that enhances the shopping experience by allowi
 ---
 
 ## Screenshots
-
-![Home Screen](screenshots/home_screen.png)
-![Cart Screen](screenshots/cart_screen.png)
-![Checkout Screen](screenshots/checkout_screen.png)
-
-_(Add screenshots or GIFs demonstrating app functionality)_
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/aec20bd2-a420-4e69-a60a-f4cfaf61c62f" alt="Workflow" width="500">
+</div>
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/1576cdfd-1d70-4543-b49a-8a4d794cdcc9" alt="Workflow" width="500">
+</div>
 
 ---
 
