@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-final authProvider = Provider<FirebaseAuth>((ref) {
-  return FirebaseAuth.instance;
-});
-
-final verificationIdProvider = StateProvider<String?>((ref) => null);
-final isCodeSentProvider = StateProvider<bool>((ref) => false);
+import 'package:line_skip/providers/auth_provider.dart';
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
@@ -42,7 +36,8 @@ class LoginPage extends ConsumerWidget {
     );
   }
 
-  Future<void> sendOtp(BuildContext context, WidgetRef ref, String phoneNumber) async {
+  Future<void> sendOtp(
+      BuildContext context, WidgetRef ref, String phoneNumber) async {
     final auth = ref.read(authProvider);
 
     await auth.verifyPhoneNumber(
@@ -66,7 +61,8 @@ class LoginPage extends ConsumerWidget {
     );
   }
 
-  Future<void> verifyOtp(BuildContext context, WidgetRef ref, String otp) async {
+  Future<void> verifyOtp(
+      BuildContext context, WidgetRef ref, String otp) async {
     final auth = ref.read(authProvider);
     final verificationId = ref.read(verificationIdProvider);
 
