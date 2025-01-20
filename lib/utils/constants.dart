@@ -1,4 +1,6 @@
 // Route Constants
+const rootRoute = '/';
+const authRoute = '/auth/';
 const splashRoute = '/splash/';
 const onboardingRoute = '/onboarding/';
 const loginRoute = '/login/';

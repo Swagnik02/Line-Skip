@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 // Store Model
 class Store {
   final String name;
