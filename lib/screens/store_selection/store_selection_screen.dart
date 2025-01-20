@@ -109,7 +109,7 @@ class StoreSelectionPage extends ConsumerWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => selectedStore!.hasTrolleyPairing
+                        builder: (context) => selectedStore.hasTrolleyPairing
                             ? const TrolleyPairingPage()
                             : const CartPage(),
                       ),
@@ -124,7 +124,7 @@ class StoreSelectionPage extends ConsumerWidget {
                     backgroundColor: Colors.deepOrangeAccent,
                   ),
                   child: Text(
-                    selectedStore!.hasTrolleyPairing
+                    selectedStore.hasTrolleyPairing
                         ? "Pair Trolley"
                         : "Go to Cart",
                     style: const TextStyle(fontSize: 18, color: Colors.white),
