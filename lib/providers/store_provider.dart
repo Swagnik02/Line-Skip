@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:line_skip/data/models/store_model.dart';
 import '../data/repositories/store_repository.dart';
 
 final storeRepositoryProvider = Provider<StoreRepository>((ref) {
@@ -11,3 +12,4 @@ final storesProvider = FutureProvider<List<Store>>((ref) async {
 });
 
 final selectedStoreProvider = StateProvider<Store?>((ref) => null);
+

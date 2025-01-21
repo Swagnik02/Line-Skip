@@ -1,52 +1,26 @@
-// Store Model
-class Store {
-  final String name;
-  final String description;
-  final bool hasTrolleyPairing;
-
-  Store({
-    required this.name,
-    required this.description,
-    required this.hasTrolleyPairing,
-  });
-}
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:line_skip/data/models/store_model.dart';
 
 class StoreRepository {
-  final List<Store> stores = [
-    Store(
-      name: 'Store A',
-      description: 'Latest gadgets and more.',
-      hasTrolleyPairing: true,
-    ),
-    Store(
-      name: 'Store B',
-      description: 'Fashion and accessories.',
-      hasTrolleyPairing: false,
-    ),
-    Store(
-      name: 'Store C',
-      description: 'Groceries and essentials.',
-      hasTrolleyPairing: true,
-    ),
-    Store(
-      name: 'Store D',
-      description: 'Books and stationery.',
-      hasTrolleyPairing: false,
-    ),
-    Store(
-      name: 'Store E',
-      description: 'Health and wellness products.',
-      hasTrolleyPairing: true,
-    ),
-  ];
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  List<Store> getStores() {
-    return stores;
-  }
+  // Fetch stores from Firestore
+  Future<List<Store>> getStores() async {
+    try {
+      // Fetch the stores collection
+      final snapshot = await _firebaseFirestore.collection('stores').get();
 
-  List<Store> getStoresWithTrolleyPairing() {
-    return stores.where((store) => store.hasTrolleyPairing).toList();
+      // Convert the snapshot data to Store objects
+      return snapshot.docs
+          .map((doc) => Store(
+                name: doc['name'],
+                description: doc['description'],
+                hasTrolleyPairing: doc['hasTrolleyPairing'],
+                location: doc['location'],
+              ))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to fetch stores: $e');
+    }
   }
 }
-
-

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:line_skip/data/repositories/store_repository.dart';
+import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/providers/store_provider.dart';
 import 'package:line_skip/screens/cart/cart_screen.dart';
 import 'package:line_skip/screens/cart/trolley_pairing_screen.dart';
@@ -14,44 +14,24 @@ class StoreSelectionPage extends ConsumerWidget {
     final selectedStore = ref.watch(selectedStoreProvider);
 
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        toolbarHeight: 300,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Stack(
-          children: [
-            // Outline text
-            Text(
-              'Line \nSkip',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                letterSpacing: 4,
-                height: 0.8,
-                fontFamily: 'Gagalin',
-                fontSize: 120,
-                foreground: Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = 6
-                  ..color = const Color.fromARGB(255, 73, 73, 73),
-              ),
-            ),
-            // Inner text
-            Text(
-              'Line \nSkip',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                letterSpacing: 4,
-                height: 0.8,
-                fontFamily: 'Gagalin',
-                fontSize: 120,
-                color: Colors.white,
-              ),
-            ),
-          ],
+        actions: [
+          IconButton(
+              onPressed: () {
+                addStoresToFirestore();
+              },
+              icon: Icon(Icons.add))
+        ],
+        leading: IconButton.filled(
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(Colors.deepOrangeAccent),
+          ),
+          color: Colors.white,
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios_new_rounded),
         ),
       ),
-      backgroundColor: Colors.grey[100],
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: storeState.when(
@@ -111,7 +91,7 @@ class StoreSelectionPage extends ConsumerWidget {
                       MaterialPageRoute(
                         builder: (context) => selectedStore.hasTrolleyPairing
                             ? const TrolleyPairingPage()
-                            : const CartPage(),
+                            : CartPage(),
                       ),
                     );
                   },
@@ -132,6 +112,17 @@ class StoreSelectionPage extends ConsumerWidget {
                 ),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.deepOrangeAccent,
+        onPressed: () {
+          ref.refresh(storesProvider);
+        },
+        shape: CircleBorder(),
+        child: const Icon(
+          Icons.refresh,
+          color: Colors.white,
         ),
       ),
     );
