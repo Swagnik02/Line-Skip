@@ -42,7 +42,7 @@ class _StorePageState extends ConsumerState<StorePage> {
   @override
   Widget build(BuildContext context) {
     final selectedStore = ref.watch(selectedStoreProvider);
-    ref.watch(inventoryProvider(selectedStore?.docId ?? ''));
+    final inventory = ref.watch(inventoryProvider(selectedStore?.docId ?? ''));
 
     return Scaffold(
       appBar: storePageAppBar(selectedStore),
@@ -58,7 +58,7 @@ class _StorePageState extends ConsumerState<StorePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // print(inventory.value!.first.name.toString());
-          scanItems(context);
+          scanItems(context, inventory);
         },
         backgroundColor: Colors.orangeAccent,
         child: const Icon(Icons.qr_code_scanner),
@@ -91,16 +91,14 @@ class _StorePageState extends ConsumerState<StorePage> {
     );
   }
 
-  Future<void> scanItems(BuildContext context) async {
+  Future<void> scanItems(
+      BuildContext context, AsyncValue<List<Item>> inventoryState) async {
     // Await the scan function to get the barcode
     final barcode = await scan(context);
     // final barcode = '8901063035027';
 
     if (barcode.isNotEmpty) {
       print('Scanned barcode: $barcode');
-      final selectedStore = ref.read(selectedStoreProvider);
-      final inventoryState =
-          ref.watch(inventoryProvider(selectedStore?.docId ?? ''));
 
       inventoryState.when(
         data: (inventory) {
