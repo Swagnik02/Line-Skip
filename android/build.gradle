@@ -12,7 +12,7 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(":app")
 }
-
+com.android.tools.build:gradle:8.2.1
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

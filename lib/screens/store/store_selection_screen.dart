@@ -16,13 +16,13 @@ class StoreSelectionPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                addStoresToFirestore();
-              },
-              icon: Icon(Icons.add))
-        ],
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         addStoresToFirestore();
+        //       },
+        //       icon: Icon(Icons.add))
+        // ],
         leading: IconButton.filled(
           style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all(Colors.deepOrangeAccent),
