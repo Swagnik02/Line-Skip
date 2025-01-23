@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:line_skip/data/models/item_model.dart';
 import 'package:line_skip/data/models/store_model.dart';
-import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/providers/inventory_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
 
@@ -57,8 +55,7 @@ class _StorePageState extends ConsumerState<StorePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // print(inventory.value!.first.name.toString());
-          scanItems(context, inventory);
+          scanToAddItems(context, inventory, ref);
         },
         backgroundColor: Colors.orangeAccent,
         child: const Icon(Icons.qr_code_scanner),
@@ -90,40 +87,6 @@ class _StorePageState extends ConsumerState<StorePage> {
       ),
     );
   }
-
-  Future<void> scanItems(
-      BuildContext context, AsyncValue<List<Item>> inventoryState) async {
-    // Await the scan function to get the barcode
-    final barcode = await scan(context);
-    // final barcode = '8901063035027';
-
-    if (barcode.isNotEmpty) {
-      print('Scanned barcode: $barcode');
-
-      inventoryState.when(
-        data: (inventory) {
-          final item = inventory.firstWhere(
-            (element) => element.barcode == barcode,
-            orElse: () => Item(name: 'Unknown', barcode: '', price: 0.0),
-          );
-
-          if (item != null) {
-            print('found item: ${item.name}');
-            ref.read(cartItemsProvider.notifier).addItem(item);
-          } else {
-            // Show a message if the item is not found
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Item not found in inventory')),
-            );
-          }
-        },
-        loading: () {
-          // Show loading state (optional)
-        },
-        error: (error, stackTrace) {
-          // Handle error state (optional)
-        },
-      );
-    }
-  }
 }
+
+

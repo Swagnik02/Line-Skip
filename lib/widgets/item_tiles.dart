@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:line_skip/data/models/item_model.dart';
 import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/utils/barcode_scanner.dart';
-import 'package:line_skip/utils/helpers.dart';
 
 class ItemTiles extends StatelessWidget {
   const ItemTiles({
@@ -100,13 +99,7 @@ class ItemTiles extends StatelessWidget {
         ),
         IconButton(
           onPressed: () async {
-            final barcode = await scan(context);
-            // final barcode = '8901063035027';
-            if (barcode == item.barcode) {
-              itemListNotifier.removeItem(item.barcode);
-            } else {
-              showErrorDialog(context, 'Different Product Selected');
-            }
+            scanToRemoveItems(context, item, itemListNotifier);
           },
           icon: const Icon(
             Icons.delete,
