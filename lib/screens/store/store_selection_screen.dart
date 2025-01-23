@@ -119,7 +119,7 @@ class StoreSelectionPage extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepOrangeAccent,
         onPressed: () {
-          var refresh = ref.refresh(storesProvider);
+          ref.refresh(storesProvider);
         },
         shape: CircleBorder(),
         child: const Icon(
