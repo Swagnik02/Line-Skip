@@ -2,14 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/item_model.dart';
 import 'package:line_skip/data/repositories/cart_repository.dart';
 
-
 // Cart Repository Provider
 final cartRepositoryProvider = Provider<CartRepository>((ref) {
   return CartRepository();
 });
 
 // Cart Items Provider
-final cartItemsProvider = StateNotifierProvider<CartNotifier, List<Item>>((ref) {
+final cartItemsProvider =
+    StateNotifierProvider<CartNotifier, List<Item>>((ref) {
   final cartRepository = ref.watch(cartRepositoryProvider);
   return CartNotifier(cartRepository);
 });
@@ -50,6 +50,6 @@ class CartNotifier extends StateNotifier<List<Item>> {
 
   // Calculate total price
   double calculateTotalPrice() {
-    return state.fold(0, (sum, item) => sum + (item.price * item.weight));
+    return state.fold(0, (sum, item) => sum + (item.price));
   }
 }

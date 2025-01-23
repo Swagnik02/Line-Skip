@@ -40,15 +40,33 @@ class Item {
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       barcode: json['barcode'],
-      name: json['name'],
-      brandName: json['brandName'],
-      price: json['price'],
-      weight: json['weight'],
-      imageUrl: json['imageUrl'],
-      category: json['category'],
-      description: json['description'],
+      name: json['name'] ?? '',
+      brandName: json['brandName'] ?? '',
+      price: json['price'] ?? 0.0,
+      weight: json['weight'] ?? 0.0,
+      imageUrl: json['imageUrl'] ?? '',
+      category: json['category'] ?? '',
+      description: json['description'] ?? '',
     );
   }
+
+  // Create from Firestore DocumentSnapshot
+  factory Item.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+    return Item(
+      barcode: data['barcode'] ?? '',
+      name: data['name'] ?? '',
+      brandName: data['brandName'] ?? '',
+      price: data['price']?.toDouble() ?? 0.0,
+      weight: data['weight']?.toDouble() ?? 0.0,
+      imageUrl: data['imageUrl'] ?? '',
+      category: data['category'] ?? '',
+      description: data['description'] ?? '',
+    );
+  }
+
+  // Convert to Map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'barcode': barcode,
@@ -57,6 +75,8 @@ class Item {
       'price': price,
       'weight': weight,
       'imageUrl': imageUrl,
+      'category': category,
+      'description': description,
     };
   }
 
