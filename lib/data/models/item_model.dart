@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Item {
   String barcode;
   String name;
@@ -20,7 +22,7 @@ class Item {
     this.description = "",
   });
 
-  // Method to convert Item object to JSON (for serialization)
+  // Convert to JSON
   Map<String, dynamic> toJson() {
     return {
       'barcode': barcode,
@@ -34,7 +36,7 @@ class Item {
     };
   }
 
-  // Method to create Item object from JSON (for deserialization)
+  // Create from JSON
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       barcode: json['barcode'],
@@ -47,35 +49,71 @@ class Item {
       description: json['description'],
     );
   }
+  Map<String, dynamic> toMap() {
+    return {
+      'barcode': barcode,
+      'name': name,
+      'brandName': brandName,
+      'price': price,
+      'weight': weight,
+      'imageUrl': imageUrl,
+    };
+  }
+
+  // Copy with updated fields
+  Item copyWith({
+    String? barcode,
+    String? name,
+    String? brandName,
+    double? price,
+    double? weight,
+    String? imageUrl,
+    String? category,
+    String? description,
+  }) {
+    return Item(
+      barcode: barcode ?? this.barcode,
+      name: name ?? this.name,
+      brandName: brandName ?? this.brandName,
+      price: price ?? this.price,
+      weight: weight ?? this.weight,
+      imageUrl: imageUrl ?? this.imageUrl,
+      category: category ?? this.category,
+      description: description ?? this.description,
+    );
+  }
 }
 
-List<Item> dummyItemList = [];
+void addItemsToFirestore(String selectedStore) async {
+  // Firestore reference to the 'stores' collection and the specific store document
+  final storeRef =
+      FirebaseFirestore.instance.collection('stores').doc(selectedStore);
 
-List<Item> dummyItemDb = [
-  Item(
+  // Firestore reference to the 'items' subcollection inside the store document
+  final itemsCollectionRef = storeRef.collection('items');
+
+  // Create an Item object with the data you want to add
+  final item = Item(
     barcode: '8901063035027',
     name: 'Milk Bikis',
     brandName: 'Britannia',
     price: 30,
     weight: 0.5,
     imageUrl:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQx20IHClk2em1SYeiO8412FMhZ4B3ubjSObw&s',
-  ),
-  Item(
-    barcode: ']C1AEGM700ROGMK0824',
-    name: 'Mouse GM700',
-    brandName: 'Ant Esports',
-    price: 1000,
-    weight: 50,
-    imageUrl:
-        'https://m.media-amazon.com/images/I/41tGB16ruOL._SX300_SY300_QL70_FMwebp_.jpg',
-  ),
-  Item(
-      barcode: '8901393016185',
-      name: 'Mentos',
-      brandName: 'Mentos',
-      price: 10,
-      weight: 0.1,
-      imageUrl:
-          'https://www.bigbasket.com/media/uploads/p/l/40107653_7-mentos-pure-fresh-sugarfree-mint-flavour-chewing-gum.jpg'),
-];
+        'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1247.jpg',
+    category: 'Snacks',
+    description: 'Delicious milk-based biscuits.',
+  );
+
+  try {
+    // Add the item to the 'items' subcollection of the selected store
+    final docRef = itemsCollectionRef
+        .doc(); // Create a new document reference for the item
+
+    // Save the item to Firestore
+    await docRef.set(item.toMap());
+    print('Added: ${item.name} to Store with docId: $selectedStore');
+  } catch (e) {
+    print('Failed to add ${item.name}: $e');
+  }
+}

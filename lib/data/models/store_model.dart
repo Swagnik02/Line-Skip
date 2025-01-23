@@ -5,12 +5,14 @@ class Store {
   final String description;
   final bool hasTrolleyPairing;
   final String location;
+  final String docId;
 
   Store({
     required this.name,
     required this.description,
     required this.hasTrolleyPairing,
     required this.location,
+    required this.docId,
   });
 
   // Convert Store object to a map for Firestore
@@ -20,6 +22,7 @@ class Store {
       'description': description,
       'hasTrolleyPairing': hasTrolleyPairing,
       'location': location,
+      'docId': docId,
       'createdAt': FieldValue.serverTimestamp(),
     };
   }
@@ -28,17 +31,22 @@ class Store {
 void addStoresToFirestore() async {
   // Firestore reference to the 'stores' collection
   final collectionRef = FirebaseFirestore.instance.collection('stores');
+  final docRef =
+      collectionRef.doc(); // Generate a new document reference with an ID
+
+  // Create a Store object, passing the generated docRef.id as the docId
   final store = Store(
     name: 'Store G',
-    description: 'Sspencer.',
+    description: 'Spencer.',
     hasTrolleyPairing: false,
     location: 'Tollygunge',
+    docId: docRef.id,
   );
 
   try {
-    // Add store data to Firestore with an Auto ID
-    await collectionRef.add(store.toMap());
-    print('Added: ${store.name}');
+    // Save the Store object to Firestore using the document reference
+    await docRef.set(store.toMap());
+    print('Added: ${store.name} with docId: ${docRef.id}');
   } catch (e) {
     print('Failed to add ${store.name}: $e');
   }

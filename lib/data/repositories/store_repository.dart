@@ -17,6 +17,7 @@ class StoreRepository {
                 description: doc['description'],
                 hasTrolleyPairing: doc['hasTrolleyPairing'],
                 location: doc['location'],
+                docId: doc['docId'],
               ))
           .toList();
     } catch (e) {

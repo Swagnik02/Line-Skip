@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/providers/store_provider.dart';
-import 'package:line_skip/screens/cart/cart_screen.dart';
-import 'package:line_skip/screens/cart/trolley_pairing_screen.dart';
+import 'package:line_skip/screens/store/store_page.dart';
+import 'package:line_skip/screens/store/trolley_pairing_screen.dart';
 
 class StoreSelectionPage extends ConsumerWidget {
   const StoreSelectionPage({super.key});
@@ -86,12 +86,14 @@ class StoreSelectionPage extends ConsumerWidget {
               if (selectedStore != null)
                 ElevatedButton(
                   onPressed: () {
+                    print(selectedStore.toMap().toString());
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => selectedStore.hasTrolleyPairing
                             ? const TrolleyPairingPage()
-                            : CartPage(),
+                            : StorePage(),
                       ),
                     );
                   },
