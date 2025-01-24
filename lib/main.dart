@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       title: StringConstants.appFullName,
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepOrange,
+          seedColor: const Color(0xFFFF5722),
           brightness: Brightness.light,
         ),
         brightness: Brightness.light,

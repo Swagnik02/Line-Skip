@@ -14,7 +14,6 @@ final cartItemsProvider =
   return CartNotifier(cartRepository);
 });
 
-// Cart Notifier
 class CartNotifier extends StateNotifier<List<Item>> {
   final CartRepository cartRepository;
 
@@ -50,6 +49,16 @@ class CartNotifier extends StateNotifier<List<Item>> {
 
   // Calculate total price
   double calculateTotalPrice() {
-    return state.fold(0, (sum, item) => sum + (item.price));
+    return state.fold(0, (sum, item) => sum + item.price);
+  }
+
+  // Calculate unique item count in the cart
+  int calculateItemCount() {
+    return state.length;
+  }
+
+  // Calculate total weight of the cart
+  double calculateTotalWeight() {
+    return state.fold(0, (sum, item) => sum + (item.weight ?? 0));
   }
 }
