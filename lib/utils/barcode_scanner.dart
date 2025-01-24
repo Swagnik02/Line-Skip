@@ -27,9 +27,9 @@ void showError(BuildContext context, String errorMessage) {
 // Function to handle scanning and adding items to the cart
 Future<void> scanToAddItems(BuildContext context,
     AsyncValue<List<Item>> inventoryState, WidgetRef ref) async {
-  final barcode = '8901063035027';
+  // final barcode = '8901063035027';
 
-  // final barcode = await scanBarcode(context);
+  final barcode = await scanBarcode(context);
 
   if (barcode.isNotEmpty) {
     inventoryState.when(
@@ -59,8 +59,8 @@ Future<void> scanToAddItems(BuildContext context,
 // Function to handle scanning and removing items from the cart
 Future<void> scanToRemoveItems(
     BuildContext context, Item item, CartNotifier itemListNotifier) async {
-  // final barcode = await scanBarcode(context);
-  final barcode = '8901063035027';
+  final barcode = await scanBarcode(context);
+  // final barcode = '8901063035027';
 
   if (barcode == item.barcode) {
     itemListNotifier.removeItem(item.barcode);
