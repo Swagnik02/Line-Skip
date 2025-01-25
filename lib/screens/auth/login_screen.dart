@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:line_skip/providers/auth_provider.dart';
+import 'package:line_skip/screens/auth/auth_service.dart';
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
@@ -16,79 +16,19 @@ class LoginPage extends ConsumerWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            if (!isCodeSent)
-              PhoneInput(
-                onSendOtp: (phoneNumber) async {
-                  await sendOtp(context, ref, phoneNumber);
+        child: isCodeSent
+            ? OtpInput(
+                onVerifyOtp: (otp) async {
+                  await AuthService.verifyOtp(context, ref, otp);
                 },
               )
-            else
-              OtpInput(
-                onVerifyOtp: (otp) async {
-                  await verifyOtp(context, ref, otp);
+            : PhoneInput(
+                onSendOtp: (phoneNumber) async {
+                  await AuthService.sendOtp(context, ref, phoneNumber);
                 },
               ),
-          ],
-        ),
       ),
     );
-  }
-
-  Future<void> sendOtp(
-      BuildContext context, WidgetRef ref, String phoneNumber) async {
-    final auth = ref.read(authProvider);
-
-    await auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await auth.signInWithCredential(credential);
-        _navigateToHome(context);
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Verification failed: ${e.message}'),
-        ));
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        ref.read(verificationIdProvider.notifier).state = verificationId;
-        ref.read(isCodeSentProvider.notifier).state = true;
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        ref.read(verificationIdProvider.notifier).state = verificationId;
-      },
-    );
-  }
-
-  Future<void> verifyOtp(
-      BuildContext context, WidgetRef ref, String otp) async {
-    final auth = ref.read(authProvider);
-    final verificationId = ref.read(verificationIdProvider);
-
-    if (verificationId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Verification ID is null'),
-      ));
-      return;
-    }
-
-    try {
-      final credential = PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: otp,
-      );
-      await auth.signInWithCredential(credential);
-      _navigateToHome(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Invalid OTP: ${e.toString()}'),
-      ));
-    }
-  }
-
-  void _navigateToHome(BuildContext context) {
-    Navigator.pushReplacementNamed(context, '/home/');
   }
 }
 

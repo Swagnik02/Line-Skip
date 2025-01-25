@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/firebase_options.dart';
-import 'package:line_skip/screens/auth/auth_screen.dart';
+import 'package:line_skip/utils/auth_screen.dart';
 import 'package:line_skip/screens/auth/login_screen.dart';
 import 'package:line_skip/screens/store/cart_screen.dart';
 import 'package:line_skip/screens/store/trolley_pairing_screen.dart';
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       routes: {
         authRoute: (context) => const AuthPage(),
         splashRoute: (context) => const SplashPage(),
-        onboardingRoute: (context) => const OnboardingPage(),
+        onboardingRoute: (context) => OnboardingPage(),
         loginRoute: (context) => const LoginPage(),
         homeRoute: (context) => const HomePage(),
         storeSelectionRoute: (context) => const StoreSelectionPage(),
