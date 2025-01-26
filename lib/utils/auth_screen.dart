@@ -11,19 +11,16 @@ class AuthPage extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // Check if the snapshot has user data (logged in)
+        debugPrint('Auth state snapshot: ${snapshot.connectionState}');
+        debugPrint('Auth state user: ${snapshot.data}');
         if (snapshot.connectionState == ConnectionState.active) {
           final User? user = snapshot.data;
           if (user == null) {
-            // If no user is logged in, navigate to the LoginPage
             return const SplashPage();
           } else {
-            // If user is logged in, navigate to the HomePage
             return const HomePage();
           }
         }
-
-        // While waiting for data, show a loading spinner
         return const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         );

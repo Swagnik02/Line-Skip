@@ -2,7 +2,7 @@
 const rootRoute = '/';
 const authRoute = '/auth/';
 const splashRoute = '/splash/';
-const onboardingRoute = '/onboarding/';
+// const onboardingRoute = '/onboarding/';
 const loginRoute = '/login/';
 const homeRoute = '/home/';
 const storeSelectionRoute = '/store-selection/';

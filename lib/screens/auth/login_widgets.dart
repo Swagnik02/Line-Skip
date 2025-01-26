@@ -1,37 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class PhoneInput extends StatelessWidget {
+class PhoneInput extends StatefulWidget {
   final Function(String phoneNumber) onSendOtp;
 
-  const PhoneInput({required this.onSendOtp, super.key});
+  const PhoneInput({required this.onSendOtp, Key? key}) : super(key: key);
+
+  @override
+  _PhoneInputState createState() => _PhoneInputState();
+}
+
+class _PhoneInputState extends State<PhoneInput> {
+  final phoneController = TextEditingController();
+  String selectedCountryCode = '+91';
+
+  final List<String> countryCodes = ['+1', '+91', '+44', '+61', '+81'];
 
   @override
   Widget build(BuildContext context) {
-    final phoneController = TextEditingController();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Enter your phone number',
-          style: TextStyle(fontSize: 16),
-        ),
+        const Text('Enter your phone number', style: TextStyle(fontSize: 16)),
         const SizedBox(height: 10),
-        TextField(
-          // autofocus: true,
-          controller: phoneController,
-          keyboardType: TextInputType.phone,
-          decoration: const InputDecoration(
-            labelText: 'Phone Number',
-            border: OutlineInputBorder(),
-          ),
+        Row(
+          children: [
+            DropdownButton<String>(
+              value: selectedCountryCode,
+              onChanged: (newValue) {
+                if (newValue != null) {
+                  setState(() {
+                    selectedCountryCode = newValue;
+                  });
+                }
+              },
+              items: countryCodes.map((code) {
+                return DropdownMenuItem<String>(
+                  value: code,
+                  child: Text(code),
+                );
+              }).toList(),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
             final phoneNumber = phoneController.text.trim();
             if (phoneNumber.isNotEmpty) {
-              onSendOtp(phoneNumber);
+              widget.onSendOtp('$selectedCountryCode$phoneNumber');
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Please enter a phone number')),
@@ -43,42 +71,80 @@ class PhoneInput extends StatelessWidget {
       ],
     );
   }
+
+  @override
+  void dispose() {
+    phoneController.dispose();
+    super.dispose();
+  }
 }
 
-class OtpInput extends StatelessWidget {
+class OtpInput extends StatefulWidget {
   final Function(String otp) onVerifyOtp;
 
-  const OtpInput({required this.onVerifyOtp, super.key});
+  const OtpInput({required this.onVerifyOtp, Key? key}) : super(key: key);
+
+  @override
+  _OtpInputState createState() => _OtpInputState();
+}
+
+class _OtpInputState extends State<OtpInput> {
+  final controllers = List.generate(6, (_) => TextEditingController());
+  final focusNodes = List.generate(6, (_) => FocusNode());
 
   @override
   Widget build(BuildContext context) {
-    final otpController = TextEditingController();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Enter the OTP',
-          style: TextStyle(fontSize: 16),
-        ),
+        const Text('Enter the OTP', style: TextStyle(fontSize: 16)),
         const SizedBox(height: 10),
-        TextField(
-          controller: otpController,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'OTP',
-            border: OutlineInputBorder(),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(6, (index) {
+            return Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: TextField(
+                  controller: controllers[index],
+                  focusNode: focusNodes[index],
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  maxLength: 1,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    counterText: '',
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  onChanged: (value) {
+                    if (value.isNotEmpty && index < 5) {
+                      focusNodes[index].unfocus();
+                      FocusScope.of(context)
+                          .requestFocus(focusNodes[index + 1]);
+                    } else if (value.isEmpty && index > 0) {
+                      focusNodes[index].unfocus();
+                      FocusScope.of(context)
+                          .requestFocus(focusNodes[index - 1]);
+                    }
+                  },
+                ),
+              ),
+            );
+          }),
         ),
         const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
-            final otp = otpController.text.trim();
-            if (otp.isNotEmpty) {
-              onVerifyOtp(otp);
+            final otp = controllers.map((c) => c.text).join();
+            if (otp.length == 6) {
+              widget.onVerifyOtp(otp);
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Please enter the OTP')),
+                const SnackBar(content: Text('Please enter the full OTP')),
               );
             }
           },
@@ -86,6 +152,17 @@ class OtpInput extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    for (var controller in controllers) {
+      controller.dispose();
+    }
+    for (var node in focusNodes) {
+      node.dispose();
+    }
+    super.dispose();
   }
 }
 

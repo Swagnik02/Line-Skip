@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
+          Text(FirebaseAuth.instance.currentUser!.phoneNumber!),
           Center(
             child: ElevatedButton(
               onPressed: () {
@@ -25,8 +26,13 @@ class HomePage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: ElevatedButton(
-        onPressed: () {
-          FirebaseAuth.instance.signOut();
+        onPressed: () async {
+          try {
+            await FirebaseAuth.instance.signOut();
+            // No need to navigate manually; AuthPage will update automatically.
+          } catch (e) {
+            debugPrint('Error signing out: $e');
+          }
         },
         child: const Text('Sign Out'),
       ),
