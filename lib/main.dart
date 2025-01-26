@@ -8,7 +8,6 @@ import 'package:line_skip/screens/auth/login_screen.dart';
 import 'package:line_skip/screens/store/cart_screen.dart';
 import 'package:line_skip/screens/store/trolley_pairing_screen.dart';
 import 'package:line_skip/screens/home/home_screen.dart';
-import 'package:line_skip/screens/onboarding/onboarding_screen.dart';
 import 'package:line_skip/screens/splash/splash_screen.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
 import 'package:line_skip/utils/constants.dart';
@@ -41,7 +40,7 @@ class MyApp extends StatelessWidget {
       routes: {
         authRoute: (context) => const AuthPage(),
         splashRoute: (context) => const SplashPage(),
-        onboardingRoute: (context) => OnboardingPage(),
+        // onboardingRoute: (context) => OnboardingPage(),
         loginRoute: (context) => const LoginPage(),
         homeRoute: (context) => const HomePage(),
         storeSelectionRoute: (context) => const StoreSelectionPage(),
