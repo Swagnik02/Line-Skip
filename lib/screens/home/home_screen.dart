@@ -14,7 +14,6 @@ class HomePage extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Text(FirebaseAuth.instance.currentUser!.phoneNumber!),
           Center(
             child: ElevatedButton(
               onPressed: () {
