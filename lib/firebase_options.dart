@@ -23,7 +23,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -48,28 +51,19 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyASXkWxU1ecwoh1u2v9XRuRa5ZRm0uEmC0',
-    appId: '1:362132041958:web:73b80b58b1426a64bd4b27',
+    appId: '1:362132041958:web:734bea93639ee0eabd4b27',
     messagingSenderId: '362132041958',
     projectId: 'lineskip-20375',
     authDomain: 'lineskip-20375.firebaseapp.com',
     storageBucket: 'lineskip-20375.firebasestorage.app',
-    measurementId: 'G-TLPJLWY0QF',
+    measurementId: 'G-NST008HMS7',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBLEQgiCRPWhAbw5hVzIPgl837Y62Wg4to',
-    appId: '1:362132041958:android:984a05c5f03ae348bd4b27',
+    appId: '1:362132041958:android:fe40a58d090eb63abd4b27',
     messagingSenderId: '362132041958',
     projectId: 'lineskip-20375',
     storageBucket: 'lineskip-20375.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBLJcgrre8r087SdU-F3mwQegmjN7hMLP4',
-    appId: '1:362132041958:ios:d7eb938a63fd6592bd4b27',
-    messagingSenderId: '362132041958',
-    projectId: 'lineskip-20375',
-    storageBucket: 'lineskip-20375.firebasestorage.app',
-    iosBundleId: 'com.example.lineSkip',
   );
 }

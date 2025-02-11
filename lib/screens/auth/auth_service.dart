@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:line_skip/providers/auth_provider.dart';
+import 'package:line_skip/utils/constants.dart';
 
 class AuthService {
   static Future<void> sendOtp(
@@ -41,6 +42,7 @@ class AuthService {
       final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
         smsCode: otp,
+        
       );
       await auth.signInWithCredential(credential);
       _navigateToHome(context);
@@ -50,7 +52,7 @@ class AuthService {
   }
 
   static void _navigateToHome(BuildContext context) {
-    Navigator.pushReplacementNamed(context, '/home/');
+    Navigator.pushReplacementNamed(context, homeRoute);
   }
 
   static void _showSnackbar(BuildContext context, String message) {
