@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:line_skip/screens/auth/login_screen.dart';
 import 'package:line_skip/screens/home/home_screen.dart';
-import 'package:line_skip/screens/splash/splash_screen.dart';
+import 'package:line_skip/screens/profile/username_screen.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -11,19 +12,25 @@ class AuthPage extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        debugPrint('Auth state snapshot: ${snapshot.connectionState}');
-        debugPrint('Auth state user: ${snapshot.data}');
-        if (snapshot.connectionState == ConnectionState.active) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
           final User? user = snapshot.data;
-          if (user == null) {
-            return const SplashPage();
+
+          if (user!.displayName == null || user.displayName!.isEmpty) {
+            print('username not present ');
+            return UsernameScreen();
           } else {
+            print('username present ');
             return const HomePage();
           }
         }
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+
+        return LoginPage();
       },
     );
   }

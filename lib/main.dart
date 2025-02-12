@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       routes: {
         authRoute: (context) => const AuthPage(),
         splashRoute: (context) => const SplashPage(),
-        loginRoute: (context) => const LoginPage(),
+        loginRoute: (context) => LoginPage(),
         homeRoute: (context) => const HomePage(),
         storeSelectionRoute: (context) => const StoreSelectionPage(),
         cartRoute: (context) => CartPage(),

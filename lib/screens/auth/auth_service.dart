@@ -13,7 +13,7 @@ class AuthService {
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
         await auth.signInWithCredential(credential);
-        _navigateToHome(context);
+        // _navigateToHome(context);
       },
       verificationFailed: (FirebaseAuthException e) {
         _showSnackbar(context, 'Verification failed: ${e.message}');
@@ -42,10 +42,9 @@ class AuthService {
       final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
         smsCode: otp,
-        
       );
       await auth.signInWithCredential(credential);
-      _navigateToHome(context);
+      // _navigateToHome(context);
     } catch (e) {
       _showSnackbar(context, 'Invalid OTP: ${e.toString()}');
     }
