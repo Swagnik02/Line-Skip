@@ -33,7 +33,6 @@ class HomePage extends ConsumerWidget {
         onPressed: () async {
           try {
             await FirebaseAuth.instance.signOut();
-            // No need to navigate manually; AuthPage will update automatically.
           } catch (e) {
             debugPrint('Error signing out: $e');
           }
