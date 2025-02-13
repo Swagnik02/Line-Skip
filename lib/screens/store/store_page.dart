@@ -6,7 +6,7 @@ import 'package:line_skip/screens/store/cart_screen.dart';
 import 'package:line_skip/screens/store/checkout_screen.dart';
 import 'package:line_skip/utils/barcode_scanner.dart';
 import 'package:line_skip/widgets/custom_bottom_nav_bar.dart';
-import 'package:line_skip/widgets/store_page%20widgets.dart';
+import 'package:line_skip/widgets/store_page_widgets.dart';
 
 class StorePage extends ConsumerWidget {
   const StorePage({super.key});

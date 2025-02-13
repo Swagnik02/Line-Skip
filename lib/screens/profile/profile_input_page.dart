@@ -40,7 +40,7 @@ class _ProfileInputPageState extends State<ProfileInputPage> {
           ),
           Expanded(
             child: PageView(
-              // physics: NeverScrollableScrollPhysics(),
+              physics: NeverScrollableScrollPhysics(),
               controller: _pageController,
               onPageChanged: _updateProgress,
               children: [
