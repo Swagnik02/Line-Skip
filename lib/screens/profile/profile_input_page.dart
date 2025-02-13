@@ -23,7 +23,7 @@ class _ProfileInputPageState extends State<ProfileInputPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFe0c1a4),
+      backgroundColor: Colors.orangeAccent[400],
       body: Column(
         children: [
           const SizedBox(height: 40),
@@ -39,35 +39,37 @@ class _ProfileInputPageState extends State<ProfileInputPage> {
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: _pageController,
-                onPageChanged: _updateProgress,
-                children: [
-                  // Username Page
-                  UsernameInputPage(onNext: () {
+            child: PageView(
+              // physics: NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              onPageChanged: _updateProgress,
+              children: [
+                // Username Page
+                UsernameInputPage(onNext: () {
+                  _pageController.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                }),
+
+                // Email Page
+                EmailPage(
+                  onNext: () {
                     _pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                     );
-                  }),
-
-                  // Email Page
-                  EmailPage(onNext: () {
-                    _pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }),
-
-                  // Profile Photo Page
-                  ProfilePhotoPage(onSkip: () {
+                  },
+                  onSkip: () {
                     Navigator.pushReplacementNamed(context, homeRoute);
-                  }),
-                ],
-              ),
+                  },
+                ),
+
+                // Profile Photo Page
+                ProfilePhotoPage(onSkip: () {
+                  Navigator.pushReplacementNamed(context, homeRoute);
+                }),
+              ],
             ),
           ),
         ],

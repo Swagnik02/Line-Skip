@@ -1,56 +1,61 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:line_skip/widgets/custom_floating_buttons.dart';
+import 'package:line_skip/widgets/custom_text_fields.dart';
 
 class EmailPage extends StatelessWidget {
   final Function onNext;
+  final Function onSkip;
 
-  EmailPage({super.key, required this.onNext});
+  EmailPage({super.key, required this.onNext, required this.onSkip});
 
   final TextEditingController _emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFe0c1a4),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: Colors.transparent,
+      body: Padding(
+        padding: const EdgeInsets.all(25.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 40),
+            const Text(
+              "Where should we send your bills?",
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "Enter your email.",
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+            const SizedBox(height: 20),
+            CustomTextField(nameController: _emailController),
+            const Spacer(),
+          ],
+        ),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(height: 40),
-          const Text(
-            "What's your email address?",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          CustomFloatingSkip(
+            onPressed: () {
+              onSkip();
+            },
           ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-          const Spacer(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-                backgroundColor: Colors.black,
-              ),
-              onPressed: () {
-                if (_emailController.text.isNotEmpty) {
-                  onNext();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Please enter your email.")),
-                  );
-                }
-              },
-              child: const Icon(Icons.arrow_forward, color: Colors.white),
-            ),
+          CustomFloatingNextButton(
+            onPressed: () {
+              if (_emailController.text.isNotEmpty) {
+                User? user = FirebaseAuth.instance.currentUser;
+                user?.updateEmail(_emailController.text);
+                onNext();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Please enter your email.")),
+                );
+              }
+            },
           ),
         ],
       ),

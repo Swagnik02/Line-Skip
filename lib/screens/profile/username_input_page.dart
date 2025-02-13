@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:line_skip/widgets/custom_floating_buttons.dart';
+import 'package:line_skip/widgets/custom_text_fields.dart';
 
 class UsernameInputPage extends StatelessWidget {
   final Function onNext;
@@ -11,57 +13,41 @@ class UsernameInputPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFe0c1a4),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 40),
-          const Text(
-            "What can we call you?",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            "Enter your username.",
-            style: TextStyle(fontSize: 16, color: Colors.black54),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
-              ),
+      backgroundColor: Colors.transparent,
+      body: Padding(
+        padding: const EdgeInsets.all(25.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 40),
+            const Text(
+              "How should we address you?",
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
-          ),
-          const Spacer(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-                backgroundColor: Colors.black,
-              ),
-              onPressed: () {
-                if (_nameController.text.isNotEmpty) {
-                  User? user = FirebaseAuth.instance.currentUser;
-                  user?.updateDisplayName(_nameController.text);
+            const SizedBox(height: 8),
+            const Text(
+              "Enter your username.",
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+            const SizedBox(height: 20),
+            CustomTextField(nameController: _nameController),
+            const Spacer(),
+          ],
+        ),
+      ),
+      floatingActionButton: CustomFloatingNextButton(
+        onPressed: () {
+          if (_nameController.text.isNotEmpty) {
+            User? user = FirebaseAuth.instance.currentUser;
+            user?.updateDisplayName(_nameController.text);
 
-                  onNext();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Please enter your name.")),
-                  );
-                }
-              },
-              child: const Icon(Icons.arrow_forward_ios, color: Colors.white),
-            ),
-          ),
-        ],
+            onNext();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Please enter your name.")),
+            );
+          }
+        },
       ),
     );
   }

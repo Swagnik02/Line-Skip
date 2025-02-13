@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:line_skip/widgets/custom_floating_buttons.dart';
 
 class ProfilePhotoPage extends StatelessWidget {
   final Function onSkip;
@@ -8,48 +9,51 @@ class ProfilePhotoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFe0c1a4),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: Colors.transparent,
+      body: Padding(
+        padding: const EdgeInsets.all(25.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 40),
+            const Text(
+              "Upload a Profile Photo",
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Center(child: _buildPhotoBox(() {})),
+            const Spacer(),
+          ],
+        ),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(height: 40),
-          const Text(
-            "Upload a Profile Photo (Optional)",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
+          CustomFloatingSkip(
             onPressed: () {
-              // Open camera/gallery to upload a profile photo
+              onSkip();
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: Colors.black),
-              ),
-            ),
-            child: const Text(
-              "Upload Photo",
-              style: TextStyle(color: Colors.black),
-            ),
           ),
-          const Spacer(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-                backgroundColor: Colors.black,
-              ),
-              onPressed: () {
-                onSkip(); // Skip to home page
-              },
-              child: const Icon(Icons.arrow_forward, color: Colors.white),
-            ),
+          CustomFloatingNextButton(
+            onPressed: () {},
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPhotoBox(VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          color: Colors.white70,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.orangeAccent),
+        ),
+        child: const Icon(Icons.add, size: 40, color: Colors.orangeAccent),
       ),
     );
   }
