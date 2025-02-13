@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:line_skip/screens/auth/login_screen.dart';
 import 'package:line_skip/screens/home/home_screen.dart';
-import 'package:line_skip/screens/profile/username_screen.dart';
+import 'package:line_skip/screens/profile/profile_input_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -23,7 +25,7 @@ class AuthPage extends StatelessWidget {
 
           if (user!.displayName == null || user.displayName!.isEmpty) {
             print('username not present ');
-            return UsernameScreen();
+            return ProfileInputPage();
           } else {
             print('username present ');
             return const HomePage();
