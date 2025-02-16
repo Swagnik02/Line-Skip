@@ -109,10 +109,7 @@ class HomePage extends ConsumerWidget {
           itemCount: stores.length,
           itemBuilder: (context, index) {
             final store = stores[index];
-            return DestinationCard(
-                imagePath: store.storeImage,
-                storeName: store.name,
-                location: store.location);
+            return DestinationCard(store: store);
           },
         ),
       ),

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:line_skip/data/models/store_model.dart';
+import 'package:line_skip/screens/store/store_detail_page.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
 
 class LocateStoreSearchBox extends StatelessWidget {
@@ -95,57 +97,66 @@ class QuickOption extends StatelessWidget {
   }
 }
 
-// Destination Card Widget
 class DestinationCard extends StatelessWidget {
-  final String? imagePath;
-  final String storeName;
-  final String location;
+  final Store store;
 
   const DestinationCard({
     super.key,
-    this.imagePath,
-    required this.storeName,
-    required this.location,
+    required this.store,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          image: NetworkImage(imagePath!),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 12,
-            left: 12,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  storeName,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                Text(
-                  location,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
-            ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StoreDetailPage(store: store),
           ),
-        ],
+        );
+      },
+      child: Container(
+        width: 280,
+        margin: const EdgeInsets.only(right: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          image: DecorationImage(
+            image: NetworkImage(
+              store.storeImage ??
+                  'https://via.placeholder.com/400', // Default placeholder
+            ),
+            fit: BoxFit.cover,
+            onError: (exception, stackTrace) {}, // Avoids crash on invalid URL
+          ),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: 12,
+              left: 12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    store.name, // Corrected from `store.storeImage`
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  Text(
+                    store.location,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
