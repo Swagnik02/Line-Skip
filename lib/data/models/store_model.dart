@@ -6,12 +6,12 @@ class Store {
   final bool hasTrolleyPairing;
   final String location;
   final String docId;
-  final String? storeImage; // Optional store image
-  final double? distance; // Optional distance from user location
-  final String? offerText; // Optional limited-time offer text
-  final List<int>?
-      visitorForecast; // Optional visitor forecast for different times
-  final double? price; // Optional price for booking
+  final String storeImage; // Made it non-nullable with a default value
+  final double distance;
+  final String offerText;
+  final List<int> visitorForecast;
+  final double price;
+  final DateTime? createdAt;
 
   Store({
     required this.name,
@@ -19,11 +19,12 @@ class Store {
     required this.hasTrolleyPairing,
     required this.location,
     required this.docId,
-    this.storeImage, // Optional field
-    this.distance, // Optional field
-    this.offerText, // Optional field
-    this.visitorForecast, // Optional field
-    this.price, // Optional field
+    this.storeImage = '', // Default value to avoid null issues
+    this.distance = 0.0, // Default value
+    this.offerText = '', // Default value
+    this.visitorForecast = const [], // Default empty list
+    this.price = 0.0, // Default value
+    this.createdAt,
   });
 
   // Convert Store object to a map for Firestore
@@ -33,57 +34,34 @@ class Store {
       'description': description,
       'hasTrolleyPairing': hasTrolleyPairing,
       'location': location,
-      'docId': docId,
-      'storeImage': storeImage, // Nullable field
+      'storeImage': storeImage.isNotEmpty
+          ? storeImage
+          : null, // Avoids storing empty strings
       'distance': distance,
       'offerText': offerText,
-      'visitorForecast': visitorForecast,
+      'visitorForecast': visitorForecast.isNotEmpty ? visitorForecast : null,
       'price': price,
       'createdAt': FieldValue.serverTimestamp(),
     };
   }
 
-  // Factory constructor to create a Store instance from Firestore data
-  factory Store.fromMap(Map<String, dynamic> map) {
+  // Factory constructor to create Store from Firestore data
+  factory Store.fromJson(Map<String, dynamic> json, String docId) {
     return Store(
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
-      hasTrolleyPairing: map['hasTrolleyPairing'] ?? false,
-      location: map['location'] ?? '',
-      docId: map['docId'] ?? '',
-      storeImage: map['storeImage'],
-      distance: (map['distance'] as num?)
-          ?.toDouble(), // Convert nullable num to double
-      offerText: map['offerText'],
-      visitorForecast: map['visitorForecast'] != null
-          ? List<int>.from(map['visitorForecast'])
-          : null, // Handle nullable visitor forecast
-      price:
-          (map['price'] as num?)?.toDouble(), // Convert nullable num to double
+      name: json['name'] ?? 'Unknown Store',
+      description: json['description'] ?? '',
+      hasTrolleyPairing: json['hasTrolleyPairing'] ?? false,
+      location: json['location'] ?? 'Unknown Location',
+      docId: docId, // Firestore doc ID
+      storeImage: json['storeImage'] ?? '',
+      distance: (json['distance'] ?? 0).toDouble(),
+      offerText: json['offerText'] ?? '',
+      visitorForecast: (json['visitorForecast'] as List<dynamic>?)
+              ?.map((e) => e as int)
+              .toList() ??
+          [],
+      price: (json['price'] ?? 0).toDouble(),
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
     );
-  }
-}
-
-void addStoresToFirestore() async {
-  // Firestore reference to the 'stores' collection
-  final collectionRef = FirebaseFirestore.instance.collection('stores');
-  final docRef =
-      collectionRef.doc(); // Generate a new document reference with an ID
-
-  // Create a Store object, passing the generated docRef.id as the docId
-  final store = Store(
-    name: 'Store G',
-    description: 'Spencer.',
-    hasTrolleyPairing: false,
-    location: 'Tollygunge',
-    docId: docRef.id,
-  );
-
-  try {
-    // Save the Store object to Firestore using the document reference
-    await docRef.set(store.toMap());
-    print('Added: ${store.name} with docId: ${docRef.id}');
-  } catch (e) {
-    print('Failed to add ${store.name}: $e');
   }
 }

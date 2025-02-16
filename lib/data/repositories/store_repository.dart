@@ -7,22 +7,18 @@ class StoreRepository {
   // Fetch stores from Firestore
   Future<List<Store>> getStores() async {
     try {
-      // Fetch the stores collection
-      final snapshot = await _firebaseFirestore.collection('stores').get();
+      // Fetch the stores collection ordered by createdAt
+      final snapshot = await _firebaseFirestore
+          .collection('stores')
+          .orderBy('createdAt', descending: true) // Optional ordering
+          .get();
 
-      // Convert the snapshot data to Store objects
+      // Convert Firestore documents to Store objects
       return snapshot.docs
-          .map((doc) => Store(
-                name: doc['name'] ?? '',
-                description: doc['description'] ?? '',
-                hasTrolleyPairing: doc['hasTrolleyPairing'] ?? false,
-                location: doc['location'] ?? '',
-                docId: doc.id,
-                storeImage: doc['storeImage'],
-              ))
+          .map((doc) => Store.fromJson(doc.data(), doc.id))
           .toList();
     } catch (e) {
-      throw Exception('Failed to fetch stores: $e');
+      throw Exception('Failed to fetch stores: ${e.toString()}');
     }
   }
 }
