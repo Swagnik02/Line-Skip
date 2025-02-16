@@ -17,9 +17,11 @@ class CurrentUserNotifier extends StateNotifier<UserModel?> {
     if (user != null) {
       state = UserModel(
         id: user.uid,
-        name: user.displayName ?? '',
-        email: user.email ?? '',
-        phoneNumber: user.phoneNumber ?? '',
+        name: user.displayName ?? 'Unknown', // Default fallback
+        email: user.email ?? 'No email',
+        phoneNumber: user.phoneNumber ?? 'No phone number',
+        profileImage: user.photoURL, // Added profileImage
+        address: null, // Address needs to be fetched from Firestore
       );
     }
   }

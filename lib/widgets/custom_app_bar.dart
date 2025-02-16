@@ -70,3 +70,30 @@ AppBar customLineSkipAppBar({Widget? leading, List<Widget>? actions}) {
 //     ),
 //   );
 // }
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({
+    super.key,
+    this.title = "",
+  });
+
+  final String? title;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        onPressed: () => Navigator.pop(context),
+        color: Colors.white,
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(Colors.deepOrangeAccent),
+        ),
+      ),
+      title: Text(title!),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}

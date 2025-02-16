@@ -1,8 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/store_model.dart';
+import 'package:line_skip/data/models/user_model.dart';
 import 'package:line_skip/screens/store/store_detail_page.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
+import 'package:line_skip/utils/constants.dart';
+
+// Home App Bar with User Greeting
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final UserModel? user;
+  const HomeAppBar({super.key, this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      title: Row(
+        children: [
+          Text(
+            'Hello, ',
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(color: Colors.black),
+          ),
+          Text(
+            user?.name ?? "Guest",
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+          ),
+          const Spacer(),
+          CircleAvatar(
+            backgroundColor: Colors.deepOrangeAccent.shade100,
+            radius: 25,
+            child: IconButton(
+              onPressed: () => Navigator.pushNamed(context, profileRoute),
+              icon: const Icon(Icons.person, size: 35),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
 
 class LocateStoreSearchBox extends StatelessWidget {
   const LocateStoreSearchBox({super.key});

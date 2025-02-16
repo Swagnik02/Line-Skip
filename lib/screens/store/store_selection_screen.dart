@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/providers/store_provider.dart';
 import 'package:line_skip/screens/store/store_detail_page.dart';
+import 'package:line_skip/widgets/custom_app_bar.dart';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
@@ -16,16 +17,7 @@ class StoreSelectionPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(Colors.deepOrangeAccent),
-          ),
-        ),
-      ),
+      appBar: CustomAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: storeState.when(
