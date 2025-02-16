@@ -6,6 +6,7 @@ class Store {
   final bool hasTrolleyPairing;
   final String location;
   final String docId;
+  final String? storeImage; // Optional store image
 
   Store({
     required this.name,
@@ -13,6 +14,7 @@ class Store {
     required this.hasTrolleyPairing,
     required this.location,
     required this.docId,
+    this.storeImage, // Optional parameter
   });
 
   // Convert Store object to a map for Firestore
@@ -23,6 +25,7 @@ class Store {
       'hasTrolleyPairing': hasTrolleyPairing,
       'location': location,
       'docId': docId,
+      'storeImage': storeImage, // Nullable field
       'createdAt': FieldValue.serverTimestamp(),
     };
   }

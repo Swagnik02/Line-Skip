@@ -1,48 +1,60 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:line_skip/screens/store/store_selection_screen.dart';
 
 class LocateStoreSearchBox extends StatelessWidget {
-  const LocateStoreSearchBox({
-    super.key,
-  });
+  const LocateStoreSearchBox({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(50),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const StoreSelectionPage(),
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Locate your store',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(color: Colors.black54),
-          ),
-          Row(
-            children: [
-              IconButton.filled(
-                highlightColor: Colors.amber,
-                onPressed: () {},
-                icon: Icon(CupertinoIcons.search),
-                iconSize: 35,
-              ),
-            ],
-          )
-        ],
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(50),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Locate your store',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(color: Colors.black54),
+            ),
+            IconButton.filled(
+              highlightColor: Colors.amber,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const StoreSelectionPage(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.search),
+              iconSize: 35,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -85,15 +97,15 @@ class QuickOption extends StatelessWidget {
 
 // Destination Card Widget
 class DestinationCard extends StatelessWidget {
-  final String imagePath;
+  final String? imagePath;
+  final String storeName;
   final String location;
-  final String country;
 
   const DestinationCard({
     super.key,
-    required this.imagePath,
+    this.imagePath,
+    required this.storeName,
     required this.location,
-    required this.country,
   });
 
   @override
@@ -104,7 +116,7 @@ class DestinationCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
-          image: NetworkImage(imagePath),
+          image: NetworkImage(imagePath!),
           fit: BoxFit.cover,
         ),
       ),
@@ -117,14 +129,14 @@ class DestinationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  location,
+                  storeName,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 Text(
-                  country,
+                  location,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

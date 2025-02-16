@@ -13,11 +13,12 @@ class StoreRepository {
       // Convert the snapshot data to Store objects
       return snapshot.docs
           .map((doc) => Store(
-                name: doc['name'],
-                description: doc['description'],
-                hasTrolleyPairing: doc['hasTrolleyPairing'],
-                location: doc['location'],
-                docId: doc['docId'],
+                name: doc['name'] ?? '',
+                description: doc['description'] ?? '',
+                hasTrolleyPairing: doc['hasTrolleyPairing'] ?? false,
+                location: doc['location'] ?? '',
+                docId: doc.id,
+                storeImage: doc['storeImage'],
               ))
           .toList();
     } catch (e) {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/user_model.dart';
+import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/providers/current_user_provider.dart';
+import 'package:line_skip/providers/store_provider.dart';
 import 'package:line_skip/screens/home/home_page_widgets.dart';
 
 class HomePage extends ConsumerWidget {
@@ -10,6 +12,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
+    final storeState = ref.watch(storesProvider);
 
     return Scaffold(
       appBar: _homeAppBar(context, user),
@@ -20,20 +23,21 @@ class HomePage extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const LocateStoreSearchBox(),
                 const SizedBox(height: 16),
                 _quickOptions(),
                 const SizedBox(height: 20),
                 const Text(
-                  "Popular Destinations",
+                  "Popular Stores",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          _popularDestinations(),
+          _availableStores(storeState, context),
         ],
       ),
     );
@@ -91,37 +95,67 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  /// Horizontal ListView for Popular Destinations
-  Widget _popularDestinations() {
-    const destinations = [
-      {
-        "imagePath":
-            "https://www.shutterstock.com/image-vector/storefront-city-vector-illustration-restaurant-260nw-626771693.jpg",
-        "location": "Capadocia",
-        "country": "Turkey"
-      },
-      {
-        "imagePath":
-            "https://www.shutterstock.com/image-vector/online-shopping-concept-260nw-1247954404.jpg",
-        "location": "Snowlan",
-        "country": "Cibadak"
-      },
-    ];
-
-    return SizedBox(
-      height: 350,
-      child: Expanded(
-        child: ListView(
+  /// Display Available Stores
+  Widget _availableStores(
+      AsyncValue<List<Store>> storeState, BuildContext context) {
+    return storeState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, _) => Center(child: Text("Error: $err")),
+      data: (stores) => SizedBox(
+        height: 350,
+        child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          children: [
-            SizedBox(width: 16.0),
-            ...destinations.map((destination) => DestinationCard(
-                  imagePath: destination["imagePath"]!,
-                  location: destination["location"]!,
-                  country: destination["country"]!,
-                )),
-          ],
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          itemCount: stores.length,
+          itemBuilder: (context, index) {
+            final store = stores[index];
+            return DestinationCard(
+                imagePath: store.storeImage,
+                storeName: store.name,
+                location: store.location);
+          },
         ),
+      ),
+    );
+  }
+}
+
+/// Store Card Widget
+class StoreCard extends StatelessWidget {
+  final Store store;
+  const StoreCard({super.key, required this.store});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 150,
+      margin: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 5,
+            offset: const Offset(2, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            store.hasTrolleyPairing ? Icons.shopping_cart : Icons.store,
+            color: store.hasTrolleyPairing ? Colors.green : Colors.grey,
+            size: 50,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            store.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
