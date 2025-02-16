@@ -23,6 +23,7 @@ class HomePage extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
+                const SizedBox(height: 25),
                 const LocateStoreSearchBox(),
                 const SizedBox(height: 16),
                 const QuickOptions(),
