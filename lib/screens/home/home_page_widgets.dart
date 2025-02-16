@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/screens/store/store_detail_page.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
@@ -26,7 +26,7 @@ class LocateStoreSearchBox extends StatelessWidget {
           borderRadius: BorderRadius.circular(50),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black54,
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
@@ -123,11 +123,10 @@ class DestinationCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           image: DecorationImage(
             image: NetworkImage(
-              store.storeImage ??
-                  'https://via.placeholder.com/400', // Default placeholder
+              store.storeImage,
             ),
             fit: BoxFit.cover,
-            onError: (exception, stackTrace) {}, // Avoids crash on invalid URL
+            onError: (exception, stackTrace) {},
           ),
         ),
         child: Stack(
@@ -157,6 +156,51 @@ class DestinationCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Quick Options Section
+class QuickOptions extends StatelessWidget {
+  const QuickOptions({super.key});
+
+  static const options = [
+    {"icon": Icons.leaderboard_sharp, "title": "Best Place"},
+    {"icon": Icons.star_rounded, "title": "Favourites"},
+    {"icon": Icons.receipt_long, "title": "Receipts"},
+    {"icon": Icons.local_offer, "title": "Promos"},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: options.map((option) {
+        return QuickOption(
+          icon: option["icon"] as IconData,
+          title: option["title"] as String,
+        );
+      }).toList(),
+    );
+  }
+}
+
+// Display Available Stores
+class AvailableStores extends StatelessWidget {
+  final AsyncValue<List<Store>> storeState;
+  const AvailableStores({super.key, required this.storeState});
+
+  @override
+  Widget build(BuildContext context) {
+    return storeState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, _) => Center(child: Text("Error: $err")),
+      data: (stores) => ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        itemCount: stores.length,
+        itemBuilder: (context, index) => DestinationCard(store: stores[index]),
       ),
     );
   }

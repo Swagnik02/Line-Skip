@@ -19,7 +19,7 @@ class Store {
     required this.hasTrolleyPairing,
     required this.location,
     required this.docId,
-    this.storeImage = '', // Default value to avoid null issues
+    this.storeImage = '',
     this.distance = 0.0, // Default value
     this.offerText = '', // Default value
     this.visitorForecast = const [], // Default empty list
@@ -34,9 +34,7 @@ class Store {
       'description': description,
       'hasTrolleyPairing': hasTrolleyPairing,
       'location': location,
-      'storeImage': storeImage.isNotEmpty
-          ? storeImage
-          : null, // Avoids storing empty strings
+      'storeImage': storeImage.isNotEmpty ? storeImage : null,
       'distance': distance,
       'offerText': offerText,
       'visitorForecast': visitorForecast.isNotEmpty ? visitorForecast : null,
@@ -52,10 +50,10 @@ class Store {
       description: json['description'] ?? '',
       hasTrolleyPairing: json['hasTrolleyPairing'] ?? false,
       location: json['location'] ?? 'Unknown Location',
-      docId: docId, // Firestore doc ID
-      storeImage: json['storeImage'] ?? '',
+      docId: docId,
+      storeImage: json['storeImage'] ?? 'https://dummyimage.com/400',
       distance: (json['distance'] ?? 0).toDouble(),
-      offerText: json['offerText'] ?? '',
+      offerText: json['offerText'] ?? 'No offers available',
       visitorForecast: (json['visitorForecast'] as List<dynamic>?)
               ?.map((e) => e as int)
               .toList() ??
