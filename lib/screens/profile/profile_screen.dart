@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/current_user_provider.dart';
+import 'package:line_skip/screens/profile/profile_input_page.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -52,7 +53,10 @@ class ProfileScreen extends ConsumerWidget {
 
                   // Action Buttons
                   _profileOption(Icons.edit, "Edit Profile", () {
-                    // TODO: Navigate to Edit Profile Screen
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return ProfileInputPage();
+                    }));
                   }),
                   _profileOption(Icons.lock, "Change Password", () {
                     // TODO: Implement password change

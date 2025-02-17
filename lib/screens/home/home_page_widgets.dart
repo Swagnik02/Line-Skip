@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/store_model.dart';
@@ -33,7 +34,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           const Spacer(),
           CircleAvatar(
-            backgroundColor: Colors.deepOrangeAccent.shade100,
+            backgroundColor: Colors.deepOrangeAccent,
             radius: 25,
             child: IconButton(
               onPressed: () => Navigator.pushNamed(context, profileRoute),
@@ -88,7 +89,6 @@ class LocateStoreSearchBox extends StatelessWidget {
                   ?.copyWith(color: Colors.black54),
             ),
             IconButton.filled(
-              highlightColor: Colors.amber,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -97,7 +97,13 @@ class LocateStoreSearchBox extends StatelessWidget {
                   ),
                 );
               },
-              icon: const Icon(Icons.search),
+              style: ButtonStyle(
+                backgroundColor:
+                    WidgetStateProperty.all(Colors.deepOrangeAccent),
+              ),
+              icon: const Icon(
+                CupertinoIcons.search,
+              ),
               iconSize: 35,
             ),
           ],
@@ -129,7 +135,7 @@ class QuickOption extends StatelessWidget {
           child: Icon(
             icon,
             size: 28,
-            color: Colors.deepOrangeAccent.shade200,
+            color: Colors.deepOrangeAccent,
           ),
         ),
         const SizedBox(height: 8),
