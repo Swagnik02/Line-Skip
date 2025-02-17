@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:line_skip/widgets/custom_floating_buttons.dart';
@@ -36,10 +37,14 @@ class UsernameInputPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: CustomFloatingNextButton(
-        onPressed: () {
+        onPressed: () async {
           if (_nameController.text.isNotEmpty) {
             User? user = FirebaseAuth.instance.currentUser;
             user?.updateDisplayName(_nameController.text);
+            DocumentReference userDocRef =
+                FirebaseFirestore.instance.collection('users').doc(user?.uid);
+
+            await userDocRef.update({'name': _nameController.text});
 
             onNext();
           } else {

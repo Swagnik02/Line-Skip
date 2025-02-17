@@ -1,9 +1,37 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:line_skip/providers/auth_provider.dart';
 
 class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> checkAndAddUser() async {
+    User? user = _auth.currentUser; // Get the logged-in user
+    if (user == null) return;
+
+    DocumentReference userDocRef = _firestore.collection('users').doc(user.uid);
+
+    // Check if the document exists
+    DocumentSnapshot userDoc = await userDocRef.get();
+
+    if (!userDoc.exists) {
+      // New user, add data to Firestore
+      await userDocRef.set({
+        'phone': user.phoneNumber,
+        'email': "",
+        'name': "",
+        'profileImage': "",
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      print("New user added to Firestore.");
+    } else {
+      print("User already exists in Firestore.");
+    }
+  }
+
   static Future<void> sendOtp(
       BuildContext context, WidgetRef ref, String phoneNumber) async {
     final auth = ref.read(authProvider);
@@ -42,8 +70,11 @@ class AuthService {
         verificationId: verificationId,
         smsCode: otp,
       );
-      await auth.signInWithCredential(credential);
-      // _navigateToHome(context);
+      final userCredential = await auth.signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        await AuthService().checkAndAddUser();
+      }
     } catch (e) {
       _showSnackbar(context, 'Invalid OTP: ${e.toString()}');
     }

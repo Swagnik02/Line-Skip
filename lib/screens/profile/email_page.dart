@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:line_skip/widgets/custom_floating_buttons.dart';
@@ -45,14 +46,35 @@ class EmailPage extends StatelessWidget {
             },
           ),
           CustomFloatingNextButton(
-            onPressed: () {
+            onPressed: () async {
               if (_emailController.text.isNotEmpty) {
                 User? user = FirebaseAuth.instance.currentUser;
-                user?.updateEmail(_emailController.text);
-                onNext();
+                String newEmail = _emailController.text.trim();
+
+                if (user != null) {
+                  try {
+                    // Update email in Firebase Auth
+                    // await user.updateEmail(newEmail);
+
+                    // Update Firestore document
+                    DocumentReference userDocRef = FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user.uid);
+
+                    await userDocRef.update({'email': newEmail});
+
+                    print("User email updated successfully.");
+
+                    onNext();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error updating email: $e")),
+                    );
+                  }
+                }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Please enter your email.")),
+                  const SnackBar(content: Text("Please enter your email.")),
                 );
               }
             },
