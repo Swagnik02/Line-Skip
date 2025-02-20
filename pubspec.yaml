@@ -19,7 +19,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   firebase_auth: ^5.4.0
   cloud_firestore: ^5.6.1
-  simple_barcode_scanner: ^0.2.6
+  simple_barcode_scanner: ^0.3.0
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/current_user_provider.dart';
@@ -14,7 +15,7 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       appBar: const CustomAppBar(title: 'Profile'),
       body: user == null
-          ? const Center(child: CircularProgressIndicator()) // Proper centering
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -62,7 +63,10 @@ class ProfileScreen extends ConsumerWidget {
                     // TODO: Implement password change
                   }),
                   _profileOption(Icons.logout, "Logout", () {
-                    // TODO: Implement Logout Functionality
+                    final user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      FirebaseAuth.instance.signOut();
+                    }
                   }),
                 ],
               ),

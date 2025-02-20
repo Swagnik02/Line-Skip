@@ -316,10 +316,10 @@ packages:
     dependency: "direct main"
     description:
       name: simple_barcode_scanner
-      sha256: c2324120c3c0eb4a0eff966e0197cb27f3709bcea213eefb2fcd425fd91b4eaa
+      sha256: "2b6ec05e10fbf4f07687f3687c5cf46d3dcf873492e0a5758211bd957c854113"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.6"
+    version: "0.3.0"
   sky_engine:
     dependency: transitive
     description: flutter

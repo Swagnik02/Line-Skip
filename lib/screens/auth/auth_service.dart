@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:line_skip/providers/auth_provider.dart';
+import 'package:line_skip/utils/constants.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -40,7 +41,7 @@ class AuthService {
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
         await auth.signInWithCredential(credential);
-        // _navigateToHome(context);
+        _navigateToHome(context);
       },
       verificationFailed: (FirebaseAuthException e) {
         _showSnackbar(context, 'Verification failed: ${e.message}');
@@ -74,15 +75,16 @@ class AuthService {
 
       if (userCredential.user != null) {
         await AuthService().checkAndAddUser();
+        _navigateToHome(context);
       }
     } catch (e) {
       _showSnackbar(context, 'Invalid OTP: ${e.toString()}');
     }
   }
 
-  // static void _navigateToHome(BuildContext context) {
-  //   Navigator.pushReplacementNamed(context, homeRoute);
-  // }
+  static void _navigateToHome(BuildContext context) {
+    Navigator.pushReplacementNamed(context, homeRoute);
+  }
 
   static void _showSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
