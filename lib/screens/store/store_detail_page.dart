@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/store_model.dart';
+import 'package:line_skip/providers/store_provider.dart';
+import 'package:line_skip/screens/store/store_page.dart';
+import 'package:line_skip/screens/store/trolley_pairing_screen.dart';
 
-class StoreDetailPage extends StatelessWidget {
+class StoreDetailPage extends ConsumerWidget {
   final Store store;
 
   const StoreDetailPage({super.key, required this.store});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(0xFFD5E8C6), // Light green background
       body: Stack(
@@ -47,9 +51,12 @@ class StoreDetailPage extends StatelessWidget {
                   const SizedBox(height: 12),
                   _buildOfferBanner(),
                   const SizedBox(height: 16),
-                  _buildVisitorForecast(),
-                  Spacer(),
-                  _buildBookNowButton(),
+                  VisitorForecastChart(
+                    forecastValues: [50, 30, 65, 40, 40, 60, 20],
+                    highlightedIndex: 3,
+                  ),
+                  const Spacer(),
+                  _buildBookNowButton(context, ref),
                 ],
               ),
             ),
@@ -139,62 +146,102 @@ class StoreDetailPage extends StatelessWidget {
     );
   }
 
-  /// Builds the visitor forecast chart dynamically.
-  Widget _buildVisitorForecast() {
-    const List<String> times = ["8AM", "11AM", "2PM", "5PM"];
-    final List<int> forecast = store.visitorForecast ?? [10, 20, 15, 30];
+  /// Builds the "Book Now" button.
+  Widget _buildBookNowButton(BuildContext context, WidgetRef ref) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          ref.read(selectedStoreProvider.notifier).state = store;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => store.hasTrolleyPairing
+                  ? const TrolleyPairingPage()
+                  : const StorePage(),
+            ),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orange,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(
+          store.hasTrolleyPairing ? "Pair with trolley" : "Go to Cart",
+          style: const TextStyle(color: Colors.white, fontSize: 18),
+        ),
+      ),
+    );
+  }
+}
+
+class VisitorForecastChart extends StatelessWidget {
+  final List<int> forecastValues;
+  final int highlightedIndex;
+
+  const VisitorForecastChart({
+    Key? key,
+    required this.forecastValues,
+    this.highlightedIndex = -1,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    const List<String> times = [
+      "8AM",
+      "10AM",
+      "12PM",
+      "2PM",
+      "4PM",
+      "6PM",
+      "8PM"
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Today's visitor forecast",
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        const Text(
+          "Today's visitor forecast",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 60,
+          height: 180,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(
-              forecast.length,
+              forecastValues.length,
               (index) => Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    width: 16,
-                    height: forecast[index].toDouble(),
+                    width: 20,
+                    height: (forecastValues[index] * 1.5).toDouble(),
                     decoration: BoxDecoration(
-                      color: index == 3 ? Colors.orange : Colors.grey.shade300,
+                      color: index == highlightedIndex
+                          ? Colors.orange
+                          : Colors.orange.shade200,
                       borderRadius: BorderRadius.circular(8),
+                      border: index == highlightedIndex
+                          ? Border.all(
+                              color: Colors.white.withOpacity(0.5), width: 2)
+                          : null,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(times[index]),
+                  Text(
+                    times[index],
+                    style: const TextStyle(fontSize: 10),
+                  ),
                 ],
               ),
             ),
           ),
         ),
       ],
-    );
-  }
-
-  /// Builds the "Book Now" button.
-  Widget _buildBookNowButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {}, // Implement booking logic here
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.orange,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-        child: Text(
-          "Book Now \$${store.price}",
-          style: const TextStyle(color: Colors.white, fontSize: 18),
-        ),
-      ),
     );
   }
 }
