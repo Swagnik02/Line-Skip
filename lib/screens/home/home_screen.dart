@@ -25,7 +25,7 @@ class HomePage extends ConsumerWidget {
               children: [
                 const SizedBox(height: 25),
                 const LocateStoreSearchBox(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 const QuickOptions(),
                 const SizedBox(height: 24),
                 const Text(

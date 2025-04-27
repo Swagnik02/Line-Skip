@@ -1,11 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconly/iconly.dart';
 import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/data/models/user_model.dart';
 import 'package:line_skip/screens/store/store_detail_page.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
 
+// Home App Bar with User Greeting
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final UserModel? user;
   const HomeAppBar({super.key, this.user});
@@ -65,17 +66,17 @@ class LocateStoreSearchBox extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        height: 70,
+        height: 80,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(50),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black54,
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.black54,
+          //     blurRadius: 6,
+          //     offset: const Offset(0, 3),
+          //   ),
+          // ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,11 +100,14 @@ class LocateStoreSearchBox extends StatelessWidget {
               style: ButtonStyle(
                 backgroundColor:
                     WidgetStateProperty.all(Colors.deepOrangeAccent),
+                fixedSize: WidgetStateProperty.all(Size(60, 60)),
               ),
-              icon: const Icon(
-                CupertinoIcons.search,
+              icon: SizedBox(
+                child: Icon(
+                  IconlyLight.search,
+                  color: Colors.white,
+                ),
               ),
-              iconSize: 35,
             ),
           ],
         ),
@@ -124,16 +128,16 @@ class QuickOption extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 60,
-          height: 60,
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(35),
           ),
           alignment: Alignment.center,
           child: Icon(
             icon,
-            size: 28,
+            size: 35,
             color: Colors.deepOrangeAccent,
           ),
         ),
@@ -188,7 +192,7 @@ class DestinationCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    store.name,
+                    store.name, // Corrected from `store.storeImage`
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
