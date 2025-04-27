@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
-      initialRoute: authRoute,
+      initialRoute: splashRoute,
       routes: {
         authRoute: (context) => const AuthPage(),
         splashRoute: (context) => const SplashPage(),

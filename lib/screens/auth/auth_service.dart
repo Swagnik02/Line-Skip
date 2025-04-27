@@ -1,94 +1,30 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:line_skip/providers/auth_provider.dart';
-import 'package:line_skip/utils/constants.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  Future<void> checkAndAddUser() async {
-    User? user = _auth.currentUser; // Get the logged-in user
-    if (user == null) return;
-
-    DocumentReference userDocRef = _firestore.collection('users').doc(user.uid);
-
-    // Check if the document exists
-    DocumentSnapshot userDoc = await userDocRef.get();
-
-    if (!userDoc.exists) {
-      // New user, add data to Firestore
-      await userDocRef.set({
-        'phone': user.phoneNumber,
-        'email': "",
-        'name': "",
-        'profileImage': "",
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-      print("New user added to Firestore.");
-    } else {
-      print("User already exists in Firestore.");
-    }
-  }
-
-  static Future<void> sendOtp(
-      BuildContext context, WidgetRef ref, String phoneNumber) async {
-    final auth = ref.read(authProvider);
-
-    await auth.verifyPhoneNumber(
+  static Future<void> sendOtp({
+    required WidgetRef ref,
+    required String phoneNumber,
+    required Function(String verificationId) onCodeSent,
+    required Function(String error) onError,
+  }) async {
+    final authController = ref.read(authControllerProvider);
+    await authController.sendOTP(
       phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await auth.signInWithCredential(credential);
-        _navigateToHome(context);
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        _showSnackbar(context, 'Verification failed: ${e.message}');
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        ref.read(verificationIdProvider.notifier).state = verificationId;
-        ref.read(isCodeSentProvider.notifier).state = true;
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        ref.read(verificationIdProvider.notifier).state = verificationId;
-      },
+      codeSent: onCodeSent,
+      onError: onError,
     );
   }
 
-  static Future<void> verifyOtp(
-      BuildContext context, WidgetRef ref, String otp) async {
-    final auth = ref.read(authProvider);
-    final verificationId = ref.read(verificationIdProvider);
-
-    if (verificationId == null) {
-      _showSnackbar(context, 'Verification ID is null');
-      return;
-    }
-
-    try {
-      final credential = PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: otp,
-      );
-      final userCredential = await auth.signInWithCredential(credential);
-
-      if (userCredential.user != null) {
-        await AuthService().checkAndAddUser();
-        _navigateToHome(context);
-      }
-    } catch (e) {
-      _showSnackbar(context, 'Invalid OTP: ${e.toString()}');
-    }
-  }
-
-  static void _navigateToHome(BuildContext context) {
-    Navigator.pushReplacementNamed(context, homeRoute);
-  }
-
-  static void _showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-    ));
+  static Future<void> verifyOtp({
+    required WidgetRef ref,
+    required String verificationId,
+    required String otp,
+  }) async {
+    final authController = ref.read(authControllerProvider);
+    await authController.verifyOTP(
+      verificationId,
+      otp,
+    );
   }
 }

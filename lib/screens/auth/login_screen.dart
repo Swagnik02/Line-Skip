@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
-import 'package:line_skip/providers/auth_provider.dart';
 import 'package:line_skip/screens/auth/auth_service.dart';
 import 'package:line_skip/screens/auth/login_widgets.dart';
 
-class LoginPage extends ConsumerWidget {
-  const LoginPage({super.key});
+class LoginPage extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends ConsumerState<LoginPage> {
+  final phoneController = TextEditingController();
+  final otpController = TextEditingController();
+  String? verificationId;
+  bool codeSent = false;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isCodeSent = ref.watch(isCodeSentProvider);
+  void dispose() {
+    phoneController.dispose();
+    otpController.dispose();
+    super.dispose();
+  }
 
-    // Detect keyboard height
+  @override
+  Widget build(BuildContext context) {
     final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Scaffold(
@@ -21,7 +32,7 @@ class LoginPage extends ConsumerWidget {
       body: Stack(
         children: [
           _buildBackground(keyboardVisible),
-          _buildMainBody(context, ref, isCodeSent, keyboardVisible),
+          _buildMainBody(context, ref, keyboardVisible),
         ],
       ),
     );
@@ -31,19 +42,16 @@ class LoginPage extends ConsumerWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // Background image
         Image.asset(
           'assets/images/bg.png',
           fit: BoxFit.cover,
         ),
-        // Blur effect
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
           child: Container(
             color: Colors.black.withOpacity(0),
           ),
         ),
-        // Dynamic text based on keyboard visibility
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -60,8 +68,8 @@ class LoginPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildMainBody(BuildContext context, WidgetRef ref, bool isCodeSent,
-      bool keyboardVisible) {
+  Widget _buildMainBody(
+      BuildContext context, WidgetRef ref, bool keyboardVisible) {
     final height =
         keyboardVisible ? MediaQuery.of(context).size.height - 200 : 250;
 
@@ -75,15 +83,39 @@ class LoginPage extends ConsumerWidget {
           color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: isCodeSent
+            child: codeSent
                 ? OtpInput(
                     onVerifyOtp: (otp) async {
-                      await AuthService.verifyOtp(context, ref, otp);
+                      if (verificationId == null) return;
+
+                      await AuthService.verifyOtp(
+                        ref: ref,
+                        verificationId: verificationId!,
+                        otp: otp,
+                      );
+                      // Clear controllers after verification success
+                      phoneController.clear();
+                      otpController.clear();
+                      // Navigate to next page here if needed
                     },
                   )
                 : PhoneInput(
                     onSendOtp: (phoneNumber) async {
-                      await AuthService.sendOtp(context, ref, phoneNumber);
+                      await AuthService.sendOtp(
+                        ref: ref,
+                        phoneNumber: phoneNumber,
+                        onCodeSent: (vId) {
+                          setState(() {
+                            verificationId = vId;
+                            codeSent = true;
+                          });
+                        },
+                        onError: (error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(error)),
+                          );
+                        },
+                      );
                     },
                   ),
           ),

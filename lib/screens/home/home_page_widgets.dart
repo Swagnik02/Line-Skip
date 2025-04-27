@@ -5,9 +5,7 @@ import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/data/models/user_model.dart';
 import 'package:line_skip/screens/store/store_detail_page.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
-import 'package:line_skip/utils/constants.dart';
 
-// Home App Bar with User Greeting
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final UserModel? user;
   const HomeAppBar({super.key, this.user});
@@ -15,6 +13,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: Colors.transparent,
       title: Row(
         children: [
@@ -37,7 +36,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             backgroundColor: Colors.deepOrangeAccent,
             radius: 25,
             child: IconButton(
-              onPressed: () => Navigator.pushNamed(context, profileRoute),
+              onPressed: () => Scaffold.of(context).openDrawer(),
               icon: const Icon(Icons.person, size: 35),
             ),
           ),
@@ -189,7 +188,7 @@ class DestinationCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    store.name, // Corrected from `store.storeImage`
+                    store.name,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,

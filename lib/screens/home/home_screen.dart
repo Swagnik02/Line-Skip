@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/current_user_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
 import 'package:line_skip/screens/home/home_page_widgets.dart';
+import 'package:line_skip/screens/profile/profile_screen.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -37,6 +38,10 @@ class HomePage extends ConsumerWidget {
           ),
           Expanded(child: AvailableStores(storeState: storeState)),
         ],
+      ),
+      drawer: Drawer(
+        width: MediaQuery.of(context).size.width,
+        child: ProfileScreen(),
       ),
     );
   }
