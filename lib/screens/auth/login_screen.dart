@@ -2,13 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:line_skip/providers/auth_provider.dart';
-import 'package:line_skip/screens/auth/auth_service.dart';
-import 'package:line_skip/screens/auth/login_widgets.dart';
-import 'dart:ui';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/screens/auth/auth_service.dart';
 import 'package:line_skip/screens/auth/login_widgets.dart';
 
