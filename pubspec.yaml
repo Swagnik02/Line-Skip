@@ -21,6 +21,8 @@ dependencies:
   cloud_firestore: ^5.6.1
   simple_barcode_scanner: ^0.3.0
   iconly: ^1.0.1
+  country_pickers: ^3.0.1
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

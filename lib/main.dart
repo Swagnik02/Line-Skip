@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:line_skip/firebase_options.dart';
 import 'package:line_skip/screens/profile/profile_screen.dart';
 import 'package:line_skip/utils/auth_screen.dart';
@@ -30,6 +31,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: StringConstants.appFullName,
       darkTheme: ThemeData(
+        fontFamily: GoogleFonts.poppins().fontFamily,
+        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFFFF5722),
           brightness: Brightness.light,

@@ -9,6 +9,7 @@ final authControllerProvider = Provider((ref) => AuthController());
 
 class AuthController {
   final _auth = FirebaseAuth.instance;
+  late String phoneNumber = '';
 
   Future<void> sendOTP({
     required String phoneNumber,

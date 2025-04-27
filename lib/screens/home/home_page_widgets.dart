@@ -192,17 +192,15 @@ class DestinationCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    store.name, // Corrected from `store.storeImage`
+                    store.name,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                   ),
                   Text(
                     store.location,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: const Color.fromRGBO(255, 255, 255, 0.85),
                         ),
                   ),
                 ],

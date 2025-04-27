@@ -9,6 +9,7 @@ class AuthService {
     required Function(String error) onError,
   }) async {
     final authController = ref.read(authControllerProvider);
+    authController.phoneNumber = phoneNumber;
     await authController.sendOTP(
       phoneNumber: phoneNumber,
       codeSent: onCodeSent,

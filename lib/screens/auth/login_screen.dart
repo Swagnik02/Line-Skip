@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:line_skip/providers/auth_provider.dart';
 import 'dart:ui';
 import 'package:line_skip/screens/auth/auth_service.dart';
 import 'package:line_skip/screens/auth/login_widgets.dart';
@@ -14,6 +15,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final otpController = TextEditingController();
   String? verificationId;
   bool codeSent = false;
+
+  void onClickChangeNumber() {
+    setState(() {
+      codeSent = false;
+      verificationId = null;
+      phoneController.clear();
+      otpController.clear();
+    });
+  }
 
   @override
   void dispose() {
@@ -55,13 +65,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: keyboardVisible ? 30 : 50),
-            customText(
-              keyboardVisible ? 'Shop, scan, skip' : 'Line \n Skip',
-              keyboardVisible ? 40 : 120,
-            ),
+            SizedBox(height: keyboardVisible ? 0 : 50),
+            if (!keyboardVisible) customText('Line \n Skip', 120),
             if (keyboardVisible) const SizedBox(height: 16),
-            if (keyboardVisible) customText('Line Skip', 70),
+            if (keyboardVisible)
+              SizedBox(
+                height: 200,
+                child: Image.asset('assets/images/logo.png'),
+              ),
           ],
         ),
       ],
@@ -71,7 +82,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget _buildMainBody(
       BuildContext context, WidgetRef ref, bool keyboardVisible) {
     final height =
-        keyboardVisible ? MediaQuery.of(context).size.height - 200 : 250;
+        keyboardVisible ? MediaQuery.of(context).size.height - 200 : 400;
+    final authController = ref.read(authControllerProvider);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -85,6 +97,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             padding: const EdgeInsets.all(16.0),
             child: codeSent
                 ? OtpInput(
+                    onChangeNumber: onClickChangeNumber,
+                    mobileNumber: authController.phoneNumber,
                     onVerifyOtp: (otp) async {
                       if (verificationId == null) return;
 
