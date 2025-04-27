@@ -6,28 +6,80 @@ import 'package:country_pickers/country_pickers.dart';
 class PhoneInput extends StatefulWidget {
   final Function(String phoneNumber) onSendOtp;
 
-  const PhoneInput({required this.onSendOtp, Key? key}) : super(key: key);
+  const PhoneInput({Key? key, required this.onSendOtp}) : super(key: key);
 
   @override
   _PhoneInputState createState() => _PhoneInputState();
 }
 
 class _PhoneInputState extends State<PhoneInput> {
-  final phoneController = TextEditingController();
-  Country selectedCountry = CountryPickerUtils.getCountryByIsoCode('IN');
-  bool isButtonEnabled = false; // Track if the button is enabled or not
+  final TextEditingController _phoneController = TextEditingController();
+  Country _selectedCountry = CountryPickerUtils.getCountryByIsoCode('IN');
+  bool _isButtonEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    phoneController.addListener(_onPhoneNumberChanged);
+    _phoneController.addListener(_updateButtonState);
   }
 
-  void _onPhoneNumberChanged() {
+  void _updateButtonState() {
     setState(() {
-      // Enable the button only when the phone number has 10 digits
-      isButtonEnabled = phoneController.text.length == 10;
+      _isButtonEnabled = _phoneController.text.trim().length == 10;
     });
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  void _openCountryPicker() {
+    showDialog(
+      context: context,
+      builder: (context) => CountryPickerDialog(
+        titlePadding: const EdgeInsets.all(0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+        searchCursorColor: Colors.black,
+        searchInputDecoration: const InputDecoration(hintText: 'Search...'),
+        isSearchable: true,
+        onValuePicked: (Country country) {
+          setState(() => _selectedCountry = country);
+        },
+        priorityList: [
+          CountryPickerUtils.getCountryByIsoCode('IN'),
+          CountryPickerUtils.getCountryByIsoCode('US'),
+        ],
+        itemBuilder: _buildCountryItem,
+      ),
+    );
+  }
+
+  Widget _buildCountryItem(Country country) {
+    return Row(
+      children: [
+        CountryPickerUtils.getDefaultFlagImage(country),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            "+${country.phoneCode} ${country.name}",
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _sendOtp() {
+    final phoneNumber = _phoneController.text.trim();
+    if (phoneNumber.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a phone number')),
+      );
+      return;
+    }
+    widget.onSendOtp('+${_selectedCountry.phoneCode}$phoneNumber');
   }
 
   @override
@@ -37,88 +89,56 @@ class _PhoneInputState extends State<PhoneInput> {
       children: [
         const Text(
           'Shop, Scan, and Skip',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         const Text(
           'The Line',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 15),
-        Row(
-          children: [
-            const Expanded(child: Divider(color: Colors.grey)),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(
-                'Log in or sign up',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-            const Expanded(child: Divider(color: Colors.grey)),
-          ],
-        ),
+        _buildDividerWithText('Log in or sign up'),
         const SizedBox(height: 30),
         TextField(
-          controller: phoneController,
+          controller: _phoneController,
           keyboardType: TextInputType.phone,
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(10),
+            FilteringTextInputFormatter.digitsOnly,
+          ],
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
             hintText: 'Enter phone number',
             prefixIcon: GestureDetector(
-              onTap: _openCountryPickerDialog,
+              onTap: _openCountryPicker,
               child: Container(
-                width: 100,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    CountryPickerUtils.getDefaultFlagImage(selectedCountry),
+                    CountryPickerUtils.getDefaultFlagImage(_selectedCountry),
                     const SizedBox(width: 4),
-                    Text('+${selectedCountry.phoneCode}'),
+                    Text('+${_selectedCountry.phoneCode}'),
                     const Icon(Icons.arrow_drop_down),
                   ],
                 ),
               ),
             ),
           ),
-          inputFormatters: [
-            LengthLimitingTextInputFormatter(10),
-            FilteringTextInputFormatter.digitsOnly,
-          ],
         ),
         const SizedBox(height: 20),
         SizedBox(
           height: 65,
           width: double.infinity,
           child: ElevatedButton(
+            onPressed: _isButtonEnabled ? _sendOtp : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: isButtonEnabled
-                  ? Colors.deepOrangeAccent // deep orange accent
-                  : const Color(0xFFD3D3D3), // custom disabled color
+              backgroundColor: _isButtonEnabled
+                  ? Colors.deepOrangeAccent
+                  : const Color(0xFFD3D3D3),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            onPressed: isButtonEnabled
-                ? () {
-                    final phoneNumber = phoneController.text.trim();
-                    if (phoneNumber.isNotEmpty) {
-                      widget.onSendOtp(
-                          '+${selectedCountry.phoneCode}$phoneNumber');
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Please enter a phone number')),
-                      );
-                    }
-                  }
-                : null, // Disable the button when not enabled
             child: Text(
               'CONTINUE',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -132,47 +152,17 @@ class _PhoneInputState extends State<PhoneInput> {
     );
   }
 
-  void _openCountryPickerDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => CountryPickerDialog(
-        contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-        searchCursorColor: Colors.black,
-        searchInputDecoration: const InputDecoration(hintText: 'Search...'),
-        isSearchable: true,
-        title: const Text(''),
-        onValuePicked: (Country country) {
-          setState(() {
-            selectedCountry = country;
-          });
-        },
-        priorityList: [
-          CountryPickerUtils.getCountryByIsoCode('IN'),
-          CountryPickerUtils.getCountryByIsoCode('US'),
-        ],
-        itemBuilder: _buildDialogItem,
-      ),
+  Widget _buildDividerWithText(String text) {
+    return Row(
+      children: [
+        const Expanded(child: Divider(color: Colors.grey)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(text, style: const TextStyle(fontSize: 16)),
+        ),
+        const Expanded(child: Divider(color: Colors.grey)),
+      ],
     );
-  }
-
-  Widget _buildDialogItem(Country country) => Row(
-        children: <Widget>[
-          CountryPickerUtils.getDefaultFlagImage(country),
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: Text(
-              "+${country.phoneCode} ${country.name}",
-              overflow: TextOverflow.ellipsis,
-              softWrap: true,
-            ),
-          ),
-        ],
-      );
-
-  @override
-  void dispose() {
-    phoneController.dispose();
-    super.dispose();
   }
 }
 
@@ -189,23 +179,33 @@ class OtpInput extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _OtpInputState createState() => _OtpInputState();
+  State<OtpInput> createState() => _OtpInputState();
 }
 
 class _OtpInputState extends State<OtpInput> {
-  final controllers = List.generate(6, (_) => TextEditingController());
-  final focusNodes = List.generate(6, (_) => FocusNode());
+  late final List<TextEditingController> controllers;
+  late final List<FocusNode> focusNodes;
   bool isOtpValid = false;
 
   @override
   void initState() {
     super.initState();
-    for (var controller in controllers) {
-      controller.addListener(_onOtpChanged);
-    }
+    controllers = List.generate(6, (_) => TextEditingController());
+    focusNodes = List.generate(6, (_) => FocusNode());
   }
 
-  void _onOtpChanged() {
+  @override
+  void dispose() {
+    for (final controller in controllers) {
+      controller.dispose();
+    }
+    for (final node in focusNodes) {
+      node.dispose();
+    }
+    super.dispose();
+  }
+
+  void _checkOtpValidity() {
     setState(() {
       isOtpValid =
           controllers.every((controller) => controller.text.isNotEmpty);
@@ -218,15 +218,50 @@ class _OtpInputState extends State<OtpInput> {
     );
   }
 
-  @override
-  void dispose() {
-    for (var controller in controllers) {
-      controller.dispose();
+  Widget _buildOtpTextField(int index) {
+    return SizedBox(
+      width: 45,
+      child: TextField(
+        controller: controllers[index],
+        focusNode: focusNodes[index],
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        maxLength: 1,
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        decoration: InputDecoration(
+          counterText: '',
+          contentPadding: const EdgeInsets.all(10),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.deepOrangeAccent),
+          ),
+        ),
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        onChanged: (value) {
+          if (value.isNotEmpty && index < 5) {
+            FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+          } else if (value.isEmpty && index > 0) {
+            FocusScope.of(context).requestFocus(focusNodes[index - 1]);
+          }
+          _checkOtpValidity();
+        },
+      ),
+    );
+  }
+
+  void _onVerify() {
+    final otp = controllers.map((c) => c.text).join();
+    if (otp.length == 6) {
+      widget.onVerifyOtp(otp);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter the full OTP')),
+      );
     }
-    for (var node in focusNodes) {
-      node.dispose();
-    }
-    super.dispose();
   }
 
   @override
@@ -234,8 +269,10 @@ class _OtpInputState extends State<OtpInput> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Verify Your OTP',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text(
+          'Verify Your OTP',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         Text(
           "We've sent a 6-digit code to ${widget.mobileNumber}",
@@ -244,46 +281,7 @@ class _OtpInputState extends State<OtpInput> {
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(6, (index) {
-            return SizedBox(
-              width: 45,
-              child: TextField(
-                controller: controllers[index],
-                focusNode: focusNodes[index],
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                maxLength: 1,
-                style:
-                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  counterText: '',
-                  contentPadding: const EdgeInsets.all(10),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide:
-                        const BorderSide(color: Colors.deepOrangeAccent),
-                  ),
-                ),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                onChanged: (value) {
-                  if (value.isNotEmpty && index < 5) {
-                    FocusScope.of(context).requestFocus(focusNodes[index + 1]);
-                  } else if (value.isEmpty && index > 0) {
-                    FocusScope.of(context).requestFocus(focusNodes[index - 1]);
-                  }
-                },
-                onEditingComplete: () {
-                  if (index < 5) {
-                    FocusScope.of(context).requestFocus(focusNodes[index + 1]);
-                  }
-                },
-              ),
-            );
-          }),
+          children: List.generate(6, _buildOtpTextField),
         ),
         const SizedBox(height: 20),
         Row(
@@ -334,19 +332,7 @@ class _OtpInputState extends State<OtpInput> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            onPressed: isOtpValid
-                ? () {
-                    final otp = controllers.map((c) => c.text).join();
-                    if (otp.length == 6) {
-                      widget.onVerifyOtp(otp);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Please enter the full OTP')),
-                      );
-                    }
-                  }
-                : null,
+            onPressed: isOtpValid ? _onVerify : null,
             child: const Text(
               'VERIFY',
               style: TextStyle(
@@ -365,7 +351,6 @@ class _OtpInputState extends State<OtpInput> {
 Widget customText(String str, double textSize) {
   return Stack(
     children: [
-      // Outline text
       Text(
         str,
         textAlign: TextAlign.center,
@@ -376,11 +361,10 @@ Widget customText(String str, double textSize) {
           fontSize: textSize,
           foreground: Paint()
             ..style = PaintingStyle.stroke
-            ..strokeWidth = 6
-            ..color = const Color.fromARGB(255, 73, 73, 73),
+            ..strokeWidth = 5
+            ..color = const Color(0xFF494949),
         ),
       ),
-      // Inner text
       Text(
         str,
         textAlign: TextAlign.center,

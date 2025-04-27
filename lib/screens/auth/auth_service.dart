@@ -9,10 +9,9 @@ class AuthService {
     required Function(String error) onError,
   }) async {
     final authController = ref.read(authControllerProvider);
-    authController.phoneNumber = phoneNumber;
     await authController.sendOTP(
       phoneNumber: phoneNumber,
-      codeSent: onCodeSent,
+      onCodeSent: onCodeSent,
       onError: onError,
     );
   }
@@ -21,11 +20,18 @@ class AuthService {
     required WidgetRef ref,
     required String verificationId,
     required String otp,
+    required Function(String? error) onResult,
   }) async {
     final authController = ref.read(authControllerProvider);
     await authController.verifyOTP(
-      verificationId,
-      otp,
+      verificationId: verificationId,
+      smsCode: otp,
+      onResult: onResult,
     );
+  }
+
+  static Future<void> logout({required WidgetRef ref}) async {
+    final authController = ref.read(authControllerProvider);
+    await authController.logout();
   }
 }
