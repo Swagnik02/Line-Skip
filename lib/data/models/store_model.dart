@@ -6,12 +6,12 @@ class Store {
   final bool hasTrolleyPairing;
   final String location;
   final String docId;
-  final String storeImage; // Made it non-nullable with a default value
-  final double distance;
-  final String offerText;
+  final String storeImage;
   final List<int> visitorForecast;
-  final double price;
   final DateTime? createdAt;
+  final String storeUpiId;
+  final String mobileNumber;
+  final String ownerName;
 
   Store({
     required this.name,
@@ -20,11 +20,11 @@ class Store {
     required this.location,
     required this.docId,
     this.storeImage = '',
-    this.distance = 0.0, // Default value
-    this.offerText = '', // Default value
-    this.visitorForecast = const [], // Default empty list
-    this.price = 0.0, // Default value
+    this.visitorForecast = const [],
     this.createdAt,
+    this.storeUpiId = '',
+    this.mobileNumber = '',
+    this.ownerName = '',
   });
 
   // Convert Store object to a map for Firestore
@@ -35,11 +35,11 @@ class Store {
       'hasTrolleyPairing': hasTrolleyPairing,
       'location': location,
       'storeImage': storeImage.isNotEmpty ? storeImage : null,
-      'distance': distance,
-      'offerText': offerText,
       'visitorForecast': visitorForecast.isNotEmpty ? visitorForecast : null,
-      'price': price,
       'createdAt': FieldValue.serverTimestamp(),
+      'storeUpiId': storeUpiId.isNotEmpty ? storeUpiId : null,
+      'mobileNumber': mobileNumber.isNotEmpty ? mobileNumber : null,
+      'ownerName': ownerName.isNotEmpty ? ownerName : null,
     };
   }
 
@@ -52,14 +52,14 @@ class Store {
       location: json['location'] ?? 'Unknown Location',
       docId: docId,
       storeImage: json['storeImage'] ?? 'https://dummyimage.com/400',
-      distance: (json['distance'] ?? 0).toDouble(),
-      offerText: json['offerText'] ?? 'No offers available',
       visitorForecast: (json['visitorForecast'] as List<dynamic>?)
               ?.map((e) => e as int)
               .toList() ??
           [],
-      price: (json['price'] ?? 0).toDouble(),
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      storeUpiId: json['storeUpiId'] ?? '',
+      mobileNumber: json['mobileNumber'] ?? '',
+      ownerName: json['ownerName'] ?? '',
     );
   }
 }

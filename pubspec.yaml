@@ -23,6 +23,7 @@ dependencies:
   iconly: ^1.0.1
   country_pickers: ^3.0.1
   google_fonts: ^6.2.1
+  upi_pay: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:line_skip/providers/cart_provider.dart';
+import 'package:line_skip/screens/payment/payment_page.dart';
 
 class CheckoutPage extends ConsumerWidget {
   const CheckoutPage({super.key});
@@ -72,20 +73,20 @@ class CheckoutPage extends ConsumerWidget {
               ),
               const SizedBox(height: 20.0),
 
-              // Payment Methods Section
-              _buildCard(
-                context,
-                title: "Payment Methods",
-                child: Column(
-                  children: [
-                    _PaymentOption(
-                        icon: Icons.credit_card, title: "Credit/Debit Card"),
-                    _PaymentOption(icon: Icons.payments, title: "UPI"),
-                    _PaymentOption(
-                        icon: Icons.money, title: "Cash on Delivery"),
-                  ],
-                ),
-              ),
+              // // Payment Methods Section
+              // _buildCard(
+              //   context,
+              //   title: "Payment Methods",
+              //   child: Column(
+              //     children: [
+              //       _PaymentOption(
+              //           icon: Icons.credit_card, title: "Credit/Debit Card"),
+              //       _PaymentOption(icon: Icons.payments, title: "UPI"),
+              //       _PaymentOption(
+              //           icon: Icons.money, title: "Cash on Delivery"),
+              //     ],
+              //   ),
+              // ),
 
               const Spacer(),
 
@@ -93,7 +94,12 @@ class CheckoutPage extends ConsumerWidget {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle checkout logic here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PaymentPage(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(

@@ -111,8 +111,8 @@ class StoreDetailPage extends ConsumerWidget {
             children: [
               const Icon(Icons.directions_walk, color: Colors.orange, size: 16),
               const SizedBox(width: 4),
-              Text("${store.distance} km",
-                  style: const TextStyle(color: Colors.orange)),
+              // Text("${store.distance} km",
+              //     style: const TextStyle(color: Colors.orange)),
             ],
           ),
         ),
@@ -132,14 +132,14 @@ class StoreDetailPage extends ConsumerWidget {
         children: [
           const Icon(Icons.local_offer, color: Colors.green),
           const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              store.offerText,
-              style: const TextStyle(
-                  color: Colors.green, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
+          // Expanded(
+          //   child: Text(
+          //     store.offerText,
+          //     style: const TextStyle(
+          //         color: Colors.green, fontWeight: FontWeight.bold),
+          //     overflow: TextOverflow.ellipsis,
+          //   ),
+          // ),
           const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.green),
         ],
       ),

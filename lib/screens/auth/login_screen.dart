@@ -58,7 +58,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         isKeyboardVisible ? mediaQuery.size.height - 200 : 400.0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFe0c1a4),
+      backgroundColor: const Color(0xFFFEEFD5),
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -73,10 +73,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.asset(
-          'assets/images/bg.png',
-          fit: BoxFit.cover,
-        ),
+        // Image.asset(
+        //   'assets/images/bg.png',
+        //   fit: BoxFit.cover,
+        // ),
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
           child: Container(color: Colors.black.withOpacity(0)),
@@ -85,7 +85,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(height: isKeyboardVisible ? 0 : 50),
-            if (!isKeyboardVisible) customText('Line \n Skip', 120),
+            if (!isKeyboardVisible)
+              const SizedBox(
+                width: double.infinity,
+                child: Image(
+                  image: AssetImage('assets/images/overboard.gif'),
+                  fit: BoxFit.cover,
+                ),
+              ),
             if (isKeyboardVisible) const SizedBox(height: 16),
             if (isKeyboardVisible)
               SizedBox(

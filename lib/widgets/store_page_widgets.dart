@@ -19,9 +19,15 @@ AppBar buildAppBar(WidgetRef ref, Store? selectedStore) {
           CartItemCount(),
           const Spacer(),
           if (selectedStore != null)
-            Text(
-              selectedStore.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            SizedBox(
+              width: 170,
+              child: Text(
+                selectedStore.name,
+                overflow: TextOverflow.fade,
+                maxLines: 2,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
             ),
           const Spacer(),
           profileIconBtn(),

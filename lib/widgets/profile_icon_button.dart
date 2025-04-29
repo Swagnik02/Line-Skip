@@ -9,7 +9,7 @@ GestureDetector profileIconBtn() {
         border: Border.all(color: Colors.black45, width: 1),
         borderRadius: BorderRadius.circular(30),
       ),
-      width: 150,
+      width: 100,
       height: 55,
       child: Padding(
         padding: const EdgeInsets.all(4.0),
@@ -17,11 +17,11 @@ GestureDetector profileIconBtn() {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.0),
+              padding: EdgeInsets.symmetric(horizontal: 6.0),
               child: Icon(Icons.arrow_back_ios, color: Colors.black54),
             ),
             Container(
-              width: 70,
+              width: 50,
               height: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(40),
