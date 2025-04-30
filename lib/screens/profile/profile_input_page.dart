@@ -61,13 +61,13 @@ class _ProfileInputPageState extends State<ProfileInputPage> {
                     );
                   },
                   onSkip: () {
-                    Navigator.pushReplacementNamed(context, homeRoute);
+                    Navigator.pushReplacementNamed(context, authRoute);
                   },
                 ),
 
                 // Profile Photo Page
                 ProfilePhotoPage(onSkip: () {
-                  Navigator.pushReplacementNamed(context, homeRoute);
+                  Navigator.pushReplacementNamed(context, authRoute);
                 }),
               ],
             ),

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/auth_provider.dart';
 
@@ -26,7 +28,32 @@ class AuthService {
     await authController.verifyOTP(
       verificationId: verificationId,
       smsCode: otp,
-      onResult: onResult,
+      onResult: (String? error) async {
+        if (error == null) {
+          try {
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null) {
+              final userDoc =
+                  FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+              final snapshot = await userDoc.get();
+              if (!snapshot.exists) {
+                await userDoc.set({
+                  'createdAt': Timestamp.now(),
+                  'phoneNumber': user.phoneNumber,
+                  'uid': user.uid,
+                });
+              }
+            }
+          } catch (e) {
+            onResult('Failed to save user: $e');
+            return;
+          }
+        }
+
+        // Return the result (null if success, or the error string)
+        onResult(error);
+      },
     );
   }
 

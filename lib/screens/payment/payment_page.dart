@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
+import 'package:line_skip/widgets/custom_app_bar.dart';
+import 'package:line_skip/widgets/custom_elevated_button.dart';
 import 'package:upi_pay/upi_pay.dart';
 
 enum PaymentMethod {
   Card,
   GooglePay,
-  AmazonPay,
   UPI,
 }
 
@@ -19,6 +20,7 @@ class PaymentPage extends ConsumerStatefulWidget {
 
 class _PaymentPageState extends ConsumerState<PaymentPage> {
   PaymentMethod? _selectedPaymentMethod = PaymentMethod.Card;
+  int? _selectedUpiAppIndex;
   String? _upiAddrError;
   final _upiPayPlugin = UpiPay();
   List<ApplicationMeta>? _apps;
@@ -55,6 +57,9 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
       setState(() {
         _upiAddrError = err;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(err)),
+      );
       return;
     }
     setState(() {
@@ -65,7 +70,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     print("Starting transaction with id $transactionRef");
 
     final transaction = await _upiPayPlugin.initiateTransaction(
-      amount: '10',
+      amount: cartNotifier.calculateTotalPrice().toString(),
       app: app.upiApplication,
       receiverName: selectedStore.name,
       receiverUpiAddress: selectedStore.storeUpiId,
@@ -74,67 +79,58 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     );
 
     print(transaction);
-  }
 
-  void _onPayPressed() {
-    switch (_selectedPaymentMethod) {
-      case PaymentMethod.Card:
-        // Handle Card payment flow
-        print('Card payment selected');
-        break;
-      case PaymentMethod.GooglePay:
-        // Handle Google Pay flow
-        print('Google Pay selected');
-        break;
-      case PaymentMethod.AmazonPay:
-        // Handle Amazon Pay flow
-        print('Amazon Pay selected');
-        break;
-      case PaymentMethod.UPI:
-        // Ask user to select a UPI app
-        showModalBottomSheet(
-          context: context,
-          builder: (_) => _buildUpiAppsSheet(),
-        );
-        break;
-      default:
-        break;
+    if (transaction.status != UpiTransactionStatus.success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Transaction failed or cancelled.')),
+      );
     }
   }
 
-  Widget _buildUpiAppsSheet() {
-    return _apps == null
-        ? Center(child: CircularProgressIndicator())
-        : GridView.builder(
-            padding: EdgeInsets.all(16),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
-            itemCount: _apps!.length,
-            itemBuilder: (context, index) {
-              final app = _apps![index];
-              return InkWell(
-                onTap: () async {
-                  Navigator.pop(context);
-                  await _onTapUPI(app);
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    app.iconImage(48),
-                    SizedBox(height: 8),
-                    Text(
-                      app.upiApplication.getAppName(),
-                      style: TextStyle(fontSize: 12),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              );
-            },
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  void _onPayPressed() async {
+    try {
+      switch (_selectedPaymentMethod) {
+        case PaymentMethod.Card:
+          _showErrorSnackBar('Card payment is not implemented.');
+          break;
+
+        case PaymentMethod.GooglePay:
+          final googlePayApp = _apps?.firstWhere(
+            (app) => app.upiApplication == UpiApplication.googlePay,
           );
+
+          if (googlePayApp != null) {
+            await _onTapUPI(googlePayApp);
+          } else {
+            _showErrorSnackBar('Google Pay is not installed on this device.');
+          }
+          break;
+
+        case PaymentMethod.UPI:
+          if (_selectedUpiAppIndex != null &&
+              _apps != null &&
+              _apps!.isNotEmpty) {
+            await _onTapUPI(_apps![_selectedUpiAppIndex!]);
+          } else {
+            _showErrorSnackBar('Please select a UPI app to continue.');
+          }
+          break;
+
+        default:
+          _showErrorSnackBar('Please select a payment method.');
+      }
+    } catch (e) {
+      _showErrorSnackBar('An unexpected error occurred: $e');
+    }
   }
 
   @override
@@ -142,7 +138,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     final cartNotifier = ref.watch(cartItemsProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Payment Options')),
+      appBar: CustomAppBar(title: 'Payment Options'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -156,93 +152,91 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                 ),
               ),
             Expanded(
-              child: ListView(
-                children: [
+                child: ListView(
+              children: [
+                Text(
+                  'Preferred Payment',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                SizedBox(height: 12),
+
+                // Card Option
+                ListTile(
+                  leading: Icon(Icons.credit_card),
+                  title: Text('Card Payment'),
+                  trailing: Radio<PaymentMethod>(
+                    value: PaymentMethod.Card,
+                    groupValue: _selectedPaymentMethod,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedPaymentMethod = value;
+                        _selectedUpiAppIndex = null;
+                      });
+                    },
+                  ),
+                ),
+                Divider(),
+
+                // Google Pay
+                ListTile(
+                  leading: Icon(Icons.account_balance_wallet),
+                  title: Text('Google Pay'),
+                  trailing: Radio<PaymentMethod>(
+                    value: PaymentMethod.GooglePay,
+                    groupValue: _selectedPaymentMethod,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedPaymentMethod = value;
+                        _selectedUpiAppIndex = null;
+                      });
+                    },
+                  ),
+                ),
+                Divider(),
+
+                // 🔴 UPI ID option removed
+
+                // Section: Available UPI Apps
+                if (_apps != null && _apps!.isNotEmpty) ...[
+                  SizedBox(height: 24),
                   Text(
-                    'Preferred Payment',
+                    'Available UPI Apps',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   SizedBox(height: 12),
+                  ..._apps!.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final app = entry.value;
 
-                  // Card Option
-                  ListTile(
-                    leading: Icon(Icons.credit_card),
-                    title: Text('Flipkart Axis Card'),
-                    subtitle: Text('Additional ₹14 cashback'),
-                    trailing: Radio<PaymentMethod>(
-                      value: PaymentMethod.Card,
-                      groupValue: _selectedPaymentMethod,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedPaymentMethod = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Divider(),
-
-                  // Google Pay
-                  ListTile(
-                    leading: Icon(Icons.account_balance_wallet),
-                    title: Text('Google Pay'),
-                    trailing: Radio<PaymentMethod>(
-                      value: PaymentMethod.GooglePay,
-                      groupValue: _selectedPaymentMethod,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedPaymentMethod = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Divider(),
-
-                  // Amazon Pay
-                  ListTile(
-                    leading: Icon(Icons.account_balance),
-                    title: Text('Amazon Pay Balance'),
-                    trailing: Radio<PaymentMethod>(
-                      value: PaymentMethod.AmazonPay,
-                      groupValue: _selectedPaymentMethod,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedPaymentMethod = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Divider(),
-
-                  // UPI Option
-                  ListTile(
-                    leading: Icon(Icons.send),
-                    title: Text('Pay via UPI App'),
-                    trailing: Radio<PaymentMethod>(
-                      value: PaymentMethod.UPI,
-                      groupValue: _selectedPaymentMethod,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedPaymentMethod = value;
-                        });
-                      },
-                    ),
-                  ),
+                    return Column(
+                      children: [
+                        ListTile(
+                          leading: app.iconImage(40),
+                          title: Text(app.upiApplication.getAppName()),
+                          trailing: Radio<int>(
+                            value: index,
+                            groupValue: _selectedUpiAppIndex,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedPaymentMethod = null;
+                                _selectedUpiAppIndex = value;
+                                _selectedPaymentMethod = PaymentMethod.UPI;
+                              });
+                            },
+                          ),
+                        ),
+                        Divider(),
+                      ],
+                    );
+                  }),
                 ],
-              ),
-            ),
+              ],
+            )),
 
             // Pay Button
-            SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _onPayPressed,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: Text('Pay ₹${cartNotifier.calculateTotalPrice()}'),
-                ),
-              ),
+            CustomElevatedButton(
+              title: 'Pay ₹${cartNotifier.calculateTotalPrice()}',
+              onPressed: _onPayPressed,
             ),
           ],
         ),

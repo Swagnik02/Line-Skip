@@ -73,21 +73,6 @@ class CheckoutPage extends ConsumerWidget {
               ),
               const SizedBox(height: 20.0),
 
-              // // Payment Methods Section
-              // _buildCard(
-              //   context,
-              //   title: "Payment Methods",
-              //   child: Column(
-              //     children: [
-              //       _PaymentOption(
-              //           icon: Icons.credit_card, title: "Credit/Debit Card"),
-              //       _PaymentOption(icon: Icons.payments, title: "UPI"),
-              //       _PaymentOption(
-              //           icon: Icons.money, title: "Cash on Delivery"),
-              //     ],
-              //   ),
-              // ),
-
               const Spacer(),
 
               // Checkout Button
@@ -185,39 +170,6 @@ class _OrderItem extends StatelessWidget {
           Text(
             itemPrice,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PaymentOption extends StatelessWidget {
-  final IconData icon;
-  final String title;
-
-  const _PaymentOption({
-    required this.icon,
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 28,
-          ),
-          const SizedBox(width: 10.0),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Colors.white,
                 ),
           ),

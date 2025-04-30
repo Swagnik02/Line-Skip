@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/item_model.dart';
@@ -28,6 +29,17 @@ void showError(BuildContext context, String errorMessage) {
 Future<void> scanToAddItems(BuildContext context,
     AsyncValue<List<Item>> inventoryState, WidgetRef ref) async {
   // final barcode = '8901063035027';
+  if (kDebugMode) {
+    Item item = Item(
+      barcode: '8901063035027',
+      name: 'Test Item',
+      price: 10.0,
+      imageUrl: 'https://example.com/image.jpg',
+    );
+
+    ref.read(cartItemsProvider.notifier).addItem(item);
+    return;
+  }
 
   final barcode = await scanBarcode(context);
 

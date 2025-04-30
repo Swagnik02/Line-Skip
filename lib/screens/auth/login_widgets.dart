@@ -2,6 +2,7 @@ import 'package:country_pickers/country.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_pickers/country_pickers.dart';
+import 'package:line_skip/widgets/custom_elevated_button.dart';
 
 class PhoneInput extends StatefulWidget {
   final Function(String phoneNumber) onSendOtp;
@@ -126,28 +127,11 @@ class _PhoneInputState extends State<PhoneInput> {
           ),
         ),
         const SizedBox(height: 20),
-        SizedBox(
-          height: 65,
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: _isButtonEnabled ? _sendOtp : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _isButtonEnabled
-                  ? Colors.deepOrangeAccent
-                  : const Color(0xFFD3D3D3),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: Text(
-              'CONTINUE',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-            ),
-          ),
-        ),
+        CustomElevatedButton(
+          title: 'CONTINUE',
+          onPressed: _sendOtp,
+          isEnabled: _isButtonEnabled,
+        )
       ],
     );
   }
@@ -321,27 +305,10 @@ class _OtpInputState extends State<OtpInput> {
           ],
         ),
         const SizedBox(height: 30),
-        SizedBox(
-          width: double.infinity,
-          height: 55,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  isOtpValid ? Colors.deepOrangeAccent : Colors.grey[300],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onPressed: isOtpValid ? _onVerify : null,
-            child: const Text(
-              'VERIFY',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
+        CustomElevatedButton(
+          title: 'VERIFY',
+          onPressed: _onVerify,
+          isEnabled: isOtpValid,
         ),
       ],
     );
