@@ -33,7 +33,7 @@ Future<void> scanToAddItems(BuildContext context,
     Item item = Item(
       barcode: '8901063035027',
       name: 'Test Item',
-      price: 10.0,
+      price: 3.0,
       imageUrl: 'https://example.com/image.jpg',
     );
 

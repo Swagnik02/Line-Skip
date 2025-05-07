@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:developer' as dev show log;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/cart_provider.dart';
@@ -67,7 +68,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     });
 
     final transactionRef = Random.secure().nextInt(1 << 32).toString();
-    print("Starting transaction with id $transactionRef");
+    dev.log("Starting transaction with id $transactionRef");
 
     final transaction = await _upiPayPlugin.initiateTransaction(
       amount: cartNotifier.calculateTotalPrice().toString(),
@@ -78,7 +79,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
       transactionNote: 'Line Skip Payment',
     );
 
-    print(transaction);
+    dev.log('Transaction Status: $transaction');
 
     if (transaction.status != UpiTransactionStatus.success) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -193,8 +194,6 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                   ),
                 ),
                 Divider(),
-
-                // 🔴 UPI ID option removed
 
                 // Section: Available UPI Apps
                 if (_apps != null && _apps!.isNotEmpty) ...[
