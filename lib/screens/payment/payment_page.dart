@@ -8,6 +8,8 @@ import 'package:line_skip/widgets/custom_app_bar.dart';
 import 'package:line_skip/widgets/custom_elevated_button.dart';
 import 'package:upi_pay/upi_pay.dart';
 
+bool kDemoMode = true;
+
 enum PaymentMethod {
   Card,
   GooglePay,
@@ -25,6 +27,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   String? _upiAddrError;
   final _upiPayPlugin = UpiPay();
   List<ApplicationMeta>? _apps;
+  bool _isProcessingPayment = false;
 
   @override
   void initState() {
@@ -49,6 +52,27 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     return null;
   }
 
+  UpiTransactionResponse simulateSuccessTransactionResponse(
+      String transactionRef) {
+    final random = Random();
+
+    String generateRandomString(int length) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      return List.generate(
+          length, (index) => chars[random.nextInt(chars.length)]).join();
+    }
+
+    String txnId = 'TXN${generateRandomString(10)}';
+    String responseCode = '00'; // 00 usually means success
+    String approvalRefNo = 'APP${generateRandomString(6)}';
+    String status = 'SUCCESS';
+
+    String fakeRawResponse =
+        'txnId=$txnId&responseCode=$responseCode&approvalRefNo=$approvalRefNo&status=$status&txnRef=$transactionRef';
+
+    return UpiTransactionResponse.android(fakeRawResponse);
+  }
+
   Future<void> _onTapUPI(ApplicationMeta app) async {
     final selectedStore = ref.watch(selectedStoreProvider);
     final cartNotifier = ref.read(cartItemsProvider.notifier);
@@ -58,33 +82,48 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
       setState(() {
         _upiAddrError = err;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(err)),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
       return;
     }
     setState(() {
       _upiAddrError = null;
+      _isProcessingPayment = true;
     });
 
     final transactionRef = Random.secure().nextInt(1 << 32).toString();
     dev.log("Starting transaction with id $transactionRef");
 
-    final transaction = await _upiPayPlugin.initiateTransaction(
-      amount: cartNotifier.calculateTotalPrice().toString(),
-      app: app.upiApplication,
-      receiverName: selectedStore.name,
-      receiverUpiAddress: selectedStore.storeUpiId,
-      transactionRef: transactionRef,
-      transactionNote: 'Line Skip Payment',
-    );
+    late UpiTransactionResponse transaction;
 
-    dev.log('Transaction Status: $transaction');
-
-    if (transaction.status != UpiTransactionStatus.success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Transaction failed or cancelled.')),
+    try {
+      transaction = await _upiPayPlugin.initiateTransaction(
+        amount: cartNotifier.calculateTotalPrice().toString(),
+        app: app.upiApplication,
+        receiverName: selectedStore.name,
+        receiverUpiAddress: selectedStore.storeUpiId,
+        transactionRef: transactionRef,
+        transactionNote: 'Line Skip Payment',
       );
+
+      if (kDemoMode) {
+        await Future.delayed(Duration(seconds: 2));
+        transaction = simulateSuccessTransactionResponse(transactionRef);
+      }
+
+      dev.log('Transaction Status: $transaction');
+      if (transaction.status != UpiTransactionStatus.success) {
+        _showErrorSnackBar('Transaction failed or cancelled.');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Transaction successful.')),
+        );
+      }
+    } catch (e) {
+      _showErrorSnackBar('An error occurred during transaction.');
+    } finally {
+      setState(() {
+        _isProcessingPayment = false;
+      });
     }
   }
 
@@ -131,6 +170,9 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
       }
     } catch (e) {
       _showErrorSnackBar('An unexpected error occurred: $e');
+      setState(() {
+        _isProcessingPayment = false;
+      });
     }
   }
 
@@ -140,105 +182,122 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
 
     return Scaffold(
       appBar: CustomAppBar(title: 'Payment Options'),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            if (_upiAddrError != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                  _upiAddrError!,
-                  style: TextStyle(color: Colors.red),
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                if (_upiAddrError != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      _upiAddrError!,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                Expanded(
+                  child: ListView(
+                    children: [
+                      Text(
+                        'Preferred Payment',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      SizedBox(height: 12),
+
+                      // Card Option
+                      ListTile(
+                        leading: Icon(Icons.credit_card),
+                        title: Text('Card Payment'),
+                        trailing: Radio<PaymentMethod>(
+                          value: PaymentMethod.Card,
+                          groupValue: _selectedPaymentMethod,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedPaymentMethod = value;
+                              _selectedUpiAppIndex = null;
+                            });
+                          },
+                        ),
+                      ),
+                      Divider(),
+
+                      // Google Pay
+                      ListTile(
+                        leading: Icon(Icons.account_balance_wallet),
+                        title: Text('Google Pay'),
+                        trailing: Radio<PaymentMethod>(
+                          value: PaymentMethod.GooglePay,
+                          groupValue: _selectedPaymentMethod,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedPaymentMethod = value;
+                              _selectedUpiAppIndex = null;
+                            });
+                          },
+                        ),
+                      ),
+                      Divider(),
+
+                      // Section: Available UPI Apps
+                      if (_apps != null && _apps!.isNotEmpty) ...[
+                        SizedBox(height: 24),
+                        Text(
+                          'Available UPI Apps',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        SizedBox(height: 12),
+                        ..._apps!.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final app = entry.value;
+
+                          return Column(
+                            children: [
+                              ListTile(
+                                leading: app.iconImage(40),
+                                title: Text(app.upiApplication.getAppName()),
+                                trailing: Radio<int>(
+                                  value: index,
+                                  groupValue: _selectedUpiAppIndex,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedPaymentMethod = null;
+                                      _selectedUpiAppIndex = value;
+                                      _selectedPaymentMethod =
+                                          PaymentMethod.UPI;
+                                    });
+                                  },
+                                ),
+                              ),
+                              Divider(),
+                            ],
+                          );
+                        }),
+                      ],
+                    ],
+                  ),
+                ),
+
+                // Pay Button
+                CustomElevatedButton(
+                  title: 'Pay ₹${cartNotifier.calculateTotalPrice()}',
+                  onPressed: _onPayPressed,
+                ),
+              ],
+            ),
+          ),
+          if (_isProcessingPayment)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
                 ),
               ),
-            Expanded(
-                child: ListView(
-              children: [
-                Text(
-                  'Preferred Payment',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                SizedBox(height: 12),
-
-                // Card Option
-                ListTile(
-                  leading: Icon(Icons.credit_card),
-                  title: Text('Card Payment'),
-                  trailing: Radio<PaymentMethod>(
-                    value: PaymentMethod.Card,
-                    groupValue: _selectedPaymentMethod,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedPaymentMethod = value;
-                        _selectedUpiAppIndex = null;
-                      });
-                    },
-                  ),
-                ),
-                Divider(),
-
-                // Google Pay
-                ListTile(
-                  leading: Icon(Icons.account_balance_wallet),
-                  title: Text('Google Pay'),
-                  trailing: Radio<PaymentMethod>(
-                    value: PaymentMethod.GooglePay,
-                    groupValue: _selectedPaymentMethod,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedPaymentMethod = value;
-                        _selectedUpiAppIndex = null;
-                      });
-                    },
-                  ),
-                ),
-                Divider(),
-
-                // Section: Available UPI Apps
-                if (_apps != null && _apps!.isNotEmpty) ...[
-                  SizedBox(height: 24),
-                  Text(
-                    'Available UPI Apps',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  SizedBox(height: 12),
-                  ..._apps!.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final app = entry.value;
-
-                    return Column(
-                      children: [
-                        ListTile(
-                          leading: app.iconImage(40),
-                          title: Text(app.upiApplication.getAppName()),
-                          trailing: Radio<int>(
-                            value: index,
-                            groupValue: _selectedUpiAppIndex,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedPaymentMethod = null;
-                                _selectedUpiAppIndex = value;
-                                _selectedPaymentMethod = PaymentMethod.UPI;
-                              });
-                            },
-                          ),
-                        ),
-                        Divider(),
-                      ],
-                    );
-                  }),
-                ],
-              ],
-            )),
-
-            // Pay Button
-            CustomElevatedButton(
-              title: 'Pay ₹${cartNotifier.calculateTotalPrice()}',
-              onPressed: _onPayPressed,
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
