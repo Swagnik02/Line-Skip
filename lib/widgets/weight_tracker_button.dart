@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/ble_provider.dart';
+import 'package:line_skip/providers/cart_provider.dart';
 
 GestureDetector weightTrackerButton(WidgetRef ref, BuildContext context) {
   return GestureDetector(
@@ -33,31 +34,136 @@ void _openWeightTracker(BuildContext context, WidgetRef ref) {
   final bleState = ref.watch(bleProvider);
 
   if (bleState.connectedDevice != null) {
-    // Calling the independent function to show the dialog
     _showDeviceDialog(context, ref);
   }
 }
 
-// Independent function to show the dialog
 void _showDeviceDialog(BuildContext context, WidgetRef ref) {
   showDialog(
     context: context,
     builder: (_) {
       return Consumer(
         builder: (context, ref, child) {
+          final cartNotifier = ref.read(cartItemsProvider.notifier);
           final bleState = ref.watch(bleProvider);
+
+          final expectedWeight = cartNotifier.calculateTotalWeight();
+          final actualWeight = bleState.receivedData;
+
           return AlertDialog(
-            title: Text("Connected Device"),
-            content: Text("Received Data: ${bleState.receivedData}"),
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+            contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+            actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    Icon(Icons.scale, color: Colors.deepOrange),
+                    SizedBox(width: 10),
+                    Text(
+                      "Trolley Weight Info",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  bleState.connectedDevice?.name ?? "Unknown Device",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Divider(thickness: 1),
+                _infoCard(
+                  icon: Icons.speed,
+                  label: "Expected Weight",
+                  value: "$expectedWeight g",
+                  bgColor: Colors.orange.shade50,
+                ),
+                const SizedBox(height: 12),
+                _infoCard(
+                  icon: Icons.monitor_weight,
+                  label: "Actual Trolley Weight",
+                  value: "$actualWeight g",
+                  bgColor: Colors.green.shade50,
+                ),
+              ],
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
+                child: const Text(
+                  "CLOSE",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepOrange,
+                  ),
+                ),
               ),
             ],
           );
         },
       );
     },
+  );
+}
+
+Widget _infoCard({
+  required IconData icon,
+  required String label,
+  required String value,
+  Color? bgColor,
+}) {
+  return Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: bgColor ?? Colors.grey.shade100,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Row(
+      children: [
+        Icon(icon, color: Colors.grey[800], size: 24),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
   );
 }

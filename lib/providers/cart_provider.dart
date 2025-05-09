@@ -59,7 +59,7 @@ class CartNotifier extends StateNotifier<List<Item>> {
 
   // Calculate total weight of the cart
   double calculateTotalWeight() {
-    return state.fold(0, (sum, item) => sum + (item.weight ?? 0));
+    return state.fold(0, (sum, item) => sum + (item.weight));
   }
 
   // Add this to CartNotifier

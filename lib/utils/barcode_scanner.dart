@@ -34,6 +34,7 @@ Future<void> scanToAddItems(BuildContext context,
       barcode: '8901063035027',
       name: 'Test Item',
       price: 3.0,
+      weight: 5.0,
       imageUrl: 'https://example.com/image.jpg',
     );
 
@@ -71,6 +72,10 @@ Future<void> scanToAddItems(BuildContext context,
 // Function to handle scanning and removing items from the cart
 Future<void> scanToRemoveItems(
     BuildContext context, Item item, CartNotifier itemListNotifier) async {
+  if (kDebugMode) {
+    itemListNotifier.removeItem(item.barcode);
+    return;
+  }
   final barcode = await scanBarcode(context);
   // final barcode = '8901063035027';
 
