@@ -4,18 +4,18 @@ import 'package:line_skip/services/ble_service.dart';
 
 class BLEState {
   final BluetoothDevice? connectedDevice;
-  final String receivedData;
+  final double receivedData;
   final String deviceName;
 
   BLEState({
     this.connectedDevice,
-    this.receivedData = '',
+    this.receivedData = 0.0,
     this.deviceName = '',
   });
 
   BLEState copyWith({
     BluetoothDevice? connectedDevice,
-    String? receivedData,
+    double? receivedData,
     String? deviceName,
   }) {
     return BLEState(
@@ -30,7 +30,6 @@ class BLENotifier extends StateNotifier<BLEState> {
   final BleService bleService;
 
   BLENotifier(this.bleService) : super(BLEState());
-
   Future<void> connectToDevice(BluetoothDevice device) async {
     state = state.copyWith(
       connectedDevice: device,
@@ -40,7 +39,8 @@ class BLENotifier extends StateNotifier<BLEState> {
     await bleService.connectToDevice(
       device: device,
       onDataReceived: (data) {
-        state = state.copyWith(receivedData: data);
+        final parsed = double.tryParse(data.toString()) ?? 0.0;
+        state = state.copyWith(receivedData: parsed);
       },
     );
   }

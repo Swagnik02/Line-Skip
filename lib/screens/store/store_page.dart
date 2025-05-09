@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:line_skip/providers/ble_provider.dart';
+import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/providers/inventory_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
 import 'package:line_skip/screens/store/cart_screen.dart';
@@ -7,20 +9,39 @@ import 'package:line_skip/screens/store/checkout_screen.dart';
 import 'package:line_skip/utils/barcode_scanner.dart';
 import 'package:line_skip/widgets/custom_bottom_nav_bar.dart';
 import 'package:line_skip/widgets/store_page_widgets.dart';
+import 'package:line_skip/widgets/weight_tracker_button.dart';
 
-class StorePage extends ConsumerWidget {
+class StorePage extends ConsumerStatefulWidget {
   const StorePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StorePage> createState() => _StorePageState();
+}
+
+class _StorePageState extends ConsumerState<StorePage> {
+  bool _dialogShown = false;
+
+  @override
+  Widget build(BuildContext context) {
     final selectedStore = ref.watch(selectedStoreProvider);
     final inventory = ref.watch(inventoryProvider(selectedStore?.docId ?? ''));
     final currentIndex = ref.watch(currentPageProvider);
+    final cartNotifier = ref.read(cartItemsProvider.notifier);
 
     final screens = const [
       CartPage(),
       CheckoutPage(),
     ];
+
+    ref.listen<BLEState>(bleProvider, (prev, next) {
+      final actualWeight = next.receivedData;
+      final isWeightBalanced = cartNotifier.validateWeight(actualWeight);
+
+      if (!isWeightBalanced && !_dialogShown) {
+        _dialogShown = true;
+        showDeviceDialog(context, ref).then((_) => _dialogShown = false);
+      }
+    });
 
     return Scaffold(
       appBar: buildAppBar(ref, selectedStore, context),

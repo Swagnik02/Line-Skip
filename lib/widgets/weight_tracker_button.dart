@@ -34,12 +34,12 @@ void _openWeightTracker(BuildContext context, WidgetRef ref) {
   final bleState = ref.watch(bleProvider);
 
   if (bleState.connectedDevice != null) {
-    _showDeviceDialog(context, ref);
+    showDeviceDialog(context, ref);
   }
 }
 
-void _showDeviceDialog(BuildContext context, WidgetRef ref) {
-  showDialog(
+Future<void> showDeviceDialog(BuildContext context, WidgetRef ref) {
+  return showDialog(
     context: context,
     builder: (_) {
       return Consumer(
@@ -49,6 +49,7 @@ void _showDeviceDialog(BuildContext context, WidgetRef ref) {
 
           final expectedWeight = cartNotifier.calculateTotalWeight();
           final actualWeight = bleState.receivedData;
+          final isWeightMatching = cartNotifier.validateWeight(actualWeight);
 
           return AlertDialog(
             backgroundColor: Colors.white,
@@ -100,8 +101,38 @@ void _showDeviceDialog(BuildContext context, WidgetRef ref) {
                   icon: Icons.monitor_weight,
                   label: "Actual Trolley Weight",
                   value: "$actualWeight g",
-                  bgColor: Colors.green.shade50,
+                  bgColor: isWeightMatching
+                      ? Colors.green.shade50
+                      : Colors.red.shade50,
                 ),
+                if (!isWeightMatching) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Icon(Icons.warning_amber_rounded,
+                            color: Colors.red, size: 24),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            "Mismatch detected! The actual trolley weight doesn't match the expected weight of scanned items.",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
             actions: [
