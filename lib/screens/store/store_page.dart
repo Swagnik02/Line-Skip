@@ -7,6 +7,7 @@ import 'package:line_skip/providers/store_provider.dart';
 import 'package:line_skip/screens/store/cart_screen.dart';
 import 'package:line_skip/screens/store/checkout_screen.dart';
 import 'package:line_skip/utils/barcode_scanner.dart';
+import 'package:line_skip/widgets/confirmation_dialog.dart';
 import 'package:line_skip/widgets/custom_bottom_nav_bar.dart';
 import 'package:line_skip/widgets/store_page_widgets.dart';
 import 'package:line_skip/widgets/weight_tracker_button.dart';
@@ -56,14 +57,20 @@ class _StorePageState extends ConsumerState<StorePage> {
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
-        if (didPop) {
-          return;
-        }
-        final navigator = Navigator.of(context);
-        bool value = await _showExitConfirmationDialog(context);
-        if (value) {
+        bool exitConfirmed = await showConfirmationDialog(
+          context: context,
+          title: "Exit Confirmation",
+          message:
+              "Are you sure you want to exit? Any unsaved progress will be lost.",
+          cancelText: "Cancel",
+          confirmText: "Yes",
+          icon: Icons.exit_to_app,
+          cancelColor: Colors.deepOrange,
+          confirmColor: Colors.red,
+        );
+        if (exitConfirmed) {
           dispose();
-          navigator.pop();
+          Navigator.of(context).pop();
         }
       },
       child: Scaffold(
@@ -86,30 +93,6 @@ class _StorePageState extends ConsumerState<StorePage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
-  }
-
-  // Method to show a confirmation dialog
-  Future<bool> _showExitConfirmationDialog(BuildContext context) async {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Are you sure you want to exit?'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, false); // Block the pop
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, true); // Allow the pop
-            },
-            child: const Text('Yes'),
-          ),
-        ],
-      ),
-    ).then((value) => value ?? false); // Returns the decision made by the user
   }
 }
 
