@@ -1,9 +1,12 @@
 import 'dart:math';
 import 'dart:developer' as dev show log;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
+import 'package:line_skip/screens/payment/verification_page.dart';
+import 'package:line_skip/utils/payment_helpers.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 import 'package:line_skip/widgets/custom_elevated_button.dart';
 import 'package:upi_pay/upi_pay.dart';
@@ -42,42 +45,11 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     setState(() {});
   }
 
-  String? _validateUpiAddress(String value) {
-    if (value.isEmpty) {
-      return 'UPI VPA is required.';
-    }
-    if (value.split('@').length != 2) {
-      return 'Invalid UPI VPA';
-    }
-    return null;
-  }
-
-  UpiTransactionResponse simulateSuccessTransactionResponse(
-      String transactionRef) {
-    final random = Random();
-
-    String generateRandomString(int length) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      return List.generate(
-          length, (index) => chars[random.nextInt(chars.length)]).join();
-    }
-
-    String txnId = 'TXN${generateRandomString(10)}';
-    String responseCode = '00'; // 00 usually means success
-    String approvalRefNo = 'APP${generateRandomString(6)}';
-    String status = 'SUCCESS';
-
-    String fakeRawResponse =
-        'txnId=$txnId&responseCode=$responseCode&approvalRefNo=$approvalRefNo&status=$status&txnRef=$transactionRef';
-
-    return UpiTransactionResponse.android(fakeRawResponse);
-  }
-
   Future<void> _onTapUPI(ApplicationMeta app) async {
     final selectedStore = ref.watch(selectedStoreProvider);
     final cartNotifier = ref.read(cartItemsProvider.notifier);
 
-    final err = _validateUpiAddress(selectedStore!.storeUpiId);
+    final err = validateUpiAddress(selectedStore!.storeUpiId);
     if (err != null) {
       setState(() {
         _upiAddrError = err;
@@ -105,12 +77,15 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         transactionNote: 'Line Skip Payment',
       );
 
+      dev.log(transaction.toString(), name: 'UPI Transaction');
+
       if (kDemoMode) {
         await Future.delayed(Duration(seconds: 2));
-        transaction = simulateSuccessTransactionResponse(transactionRef);
+        transaction =
+            manipulateResponse(transaction.rawResponse!, transactionRef);
+        dev.log(transaction.toString(), name: 'Manipulated Response');
       }
 
-      dev.log('Transaction Status: $transaction');
       if (transaction.status != UpiTransactionStatus.success) {
         _showErrorSnackBar('Transaction failed or cancelled.');
       } else {
@@ -125,15 +100,6 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         _isProcessingPayment = false;
       });
     }
-  }
-
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
   }
 
   void _onPayPressed() async {
@@ -283,21 +249,55 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                 // Pay Button
                 CustomElevatedButton(
                   title: 'Pay ₹${cartNotifier.calculateTotalPrice()}',
-                  onPressed: _onPayPressed,
+                  onPressed: kDebugMode ? _simulatePayment : _onPayPressed,
                 ),
               ],
             ),
           ),
-          if (_isProcessingPayment)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-                ),
-              ),
-            ),
+          if (_isProcessingPayment) VerificationPage(),
         ],
+      ),
+    );
+  }
+
+  Future<void> _simulatePayment() async {
+    setState(() {
+      _isProcessingPayment = true;
+    });
+
+    final transactionRef = Random.secure().nextInt(1 << 32).toString();
+    dev.log("Starting transaction with id $transactionRef");
+
+    late UpiTransactionResponse transaction;
+
+    try {
+      transaction = simulateSuccessTransactionResponse(transactionRef);
+
+      dev.log(transaction.toString(), name: 'UPI Transaction');
+
+      await Future.delayed(Duration(seconds: 2));
+
+      if (transaction.status != UpiTransactionStatus.success) {
+        _showErrorSnackBar('Transaction failed or cancelled.');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Transaction successful.')),
+        );
+      }
+    } catch (e) {
+      _showErrorSnackBar('An error occurred during transaction.');
+    } finally {
+      setState(() {
+        _isProcessingPayment = false;
+      });
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
       ),
     );
   }
