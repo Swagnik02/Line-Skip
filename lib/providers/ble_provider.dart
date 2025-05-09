@@ -42,11 +42,18 @@ class BLENotifier extends StateNotifier<BLEState> {
         final parsed = double.tryParse(data.toString()) ?? 0.0;
         state = state.copyWith(receivedData: parsed);
       },
+      onDisconnected: () {
+        clear();
+      },
     );
   }
 
   Future<void> disconnect() async {
     await bleService.disconnectDevice(state.connectedDevice);
+    clear();
+  }
+
+  void clear() {
     state = BLEState();
   }
 }

@@ -24,6 +24,8 @@ class CartNotifier extends StateNotifier<List<Item>> {
     state = await cartRepository.fetchCartItems();
   }
 
+  void resetCart() => state = [];
+
   // Add an item
   void addItem(Item item) {
     state = [...state, item];

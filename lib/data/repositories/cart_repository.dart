@@ -10,6 +10,11 @@ class CartRepository {
     return _cartItems;
   }
 
+  // Clear all items in the cart
+  void clearCart() {
+    _cartItems.clear();
+  }
+
   // Add an item to the cart
   void addItem(Item item) {
     _cartItems.add(item);

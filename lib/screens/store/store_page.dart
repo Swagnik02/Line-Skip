@@ -22,6 +22,16 @@ class _StorePageState extends ConsumerState<StorePage> {
   bool _dialogShown = false;
 
   @override
+  void dispose() {
+    // Reset cart provider state
+    ref.read(cartItemsProvider.notifier).resetCart();
+    ref.invalidate(inventoryProvider);
+
+    ref.read(bleProvider.notifier).disconnect();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final selectedStore = ref.watch(selectedStoreProvider);
     final inventory = ref.watch(inventoryProvider(selectedStore?.docId ?? ''));
@@ -43,24 +53,63 @@ class _StorePageState extends ConsumerState<StorePage> {
       }
     });
 
-    return Scaffold(
-      appBar: buildAppBar(ref, selectedStore, context),
-      body: screens[currentIndex],
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: currentIndex,
-        onTap: (index) => ref.read(currentPageProvider.notifier).state = index,
-        bottomNavItems: [
-          CustomStyle16NavBarItem(title: 'Cart', icon: Icons.shopping_cart),
-          CustomStyle16NavBarItem(title: 'Payment', icon: Icons.payment),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) {
+          return;
+        }
+        final navigator = Navigator.of(context);
+        bool value = await _showExitConfirmationDialog(context);
+        if (value) {
+          dispose();
+          navigator.pop();
+        }
+      },
+      child: Scaffold(
+        appBar: buildAppBar(ref, selectedStore, context),
+        body: screens[currentIndex],
+        bottomNavigationBar: CustomBottomNavBar(
+          currentIndex: currentIndex,
+          onTap: (index) =>
+              ref.read(currentPageProvider.notifier).state = index,
+          bottomNavItems: [
+            CustomStyle16NavBarItem(title: 'Cart', icon: Icons.shopping_cart),
+            CustomStyle16NavBarItem(title: 'Payment', icon: Icons.payment),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async => scanToAddItems(context, inventory, ref),
+          backgroundColor: Colors.orangeAccent,
+          child: const Icon(Icons.qr_code_scanner),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      ),
+    );
+  }
+
+  // Method to show a confirmation dialog
+  Future<bool> _showExitConfirmationDialog(BuildContext context) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Are you sure you want to exit?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, false); // Block the pop
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, true); // Allow the pop
+            },
+            child: const Text('Yes'),
+          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async => scanToAddItems(context, inventory, ref),
-        backgroundColor: Colors.orangeAccent,
-        child: const Icon(Icons.qr_code_scanner),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
+    ).then((value) => value ?? false); // Returns the decision made by the user
   }
 }
 

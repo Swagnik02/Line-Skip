@@ -4,6 +4,9 @@ import 'package:line_skip/data/models/item_model.dart';
 class InventoryRepository {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
+  // Flush inventory data
+  void flushInventory() {}
+
   // Fetch inventory from Firestore based on store UID
   Future<List<Item>> getInventory(String storeUid) async {
     try {
