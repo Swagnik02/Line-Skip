@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/screens/payment/payment_page.dart';
-import 'package:line_skip/screens/payment/razor_page.dart';
 
 class CheckoutPage extends ConsumerWidget {
   const CheckoutPage({super.key});
