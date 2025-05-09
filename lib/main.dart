@@ -8,7 +8,7 @@ import 'package:line_skip/screens/profile/profile_screen.dart';
 import 'package:line_skip/utils/auth_screen.dart';
 import 'package:line_skip/screens/auth/login_screen.dart';
 import 'package:line_skip/screens/store/cart_screen.dart';
-import 'package:line_skip/screens/store/trolley_pairing_screen.dart';
+// import 'package:line_skip/screens/store/trolley_pairing_screen.dart';
 import 'package:line_skip/screens/home/home_screen.dart';
 import 'package:line_skip/screens/splash/splash_screen.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         profileRoute: (context) => const ProfileScreen(),
         storeSelectionRoute: (context) => const StoreSelectionPage(),
         cartRoute: (context) => CartPage(),
-        trolleyPairingRoute: (context) => const TrolleyPairingPage(),
+        // trolleyPairingRoute: (context) => const TrolleyPairingPage(),
       },
     );
   }

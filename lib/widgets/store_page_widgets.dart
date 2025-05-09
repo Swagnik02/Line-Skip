@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/screens/store/store_page.dart';
-import 'package:line_skip/widgets/profile_icon_button.dart';
+import 'package:line_skip/widgets/weight_tracker_button.dart';
 
-AppBar buildAppBar(WidgetRef ref, Store? selectedStore) {
+AppBar buildAppBar(WidgetRef ref, Store? selectedStore, BuildContext context) {
   return AppBar(
     backgroundColor: ref.watch(currentPageProvider) == 1
         ? Colors.deepOrangeAccent
@@ -30,7 +30,9 @@ AppBar buildAppBar(WidgetRef ref, Store? selectedStore) {
               ),
             ),
           const Spacer(),
-          profileIconBtn(),
+          selectedStore!.hasTrolleyPairing
+              ? weightTrackerButton(ref, context)
+              : Container(),
         ],
       ),
     ),

@@ -23,7 +23,7 @@ class StorePage extends ConsumerWidget {
     ];
 
     return Scaffold(
-      appBar: buildAppBar(ref, selectedStore),
+      appBar: buildAppBar(ref, selectedStore, context),
       body: screens[currentIndex],
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: currentIndex,

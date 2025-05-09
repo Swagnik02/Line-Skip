@@ -157,7 +157,7 @@ class StoreDetailPage extends ConsumerWidget {
             context,
             MaterialPageRoute(
               builder: (context) => store.hasTrolleyPairing
-                  ? const TrolleyPairingPage()
+                  ? TrolleyPairingPage()
                   : const StorePage(),
             ),
           );

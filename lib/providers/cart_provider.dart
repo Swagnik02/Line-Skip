@@ -61,4 +61,10 @@ class CartNotifier extends StateNotifier<List<Item>> {
   double calculateTotalWeight() {
     return state.fold(0, (sum, item) => sum + (item.weight ?? 0));
   }
+
+  // Add this to CartNotifier
+  bool validateWeight(double actualWeight, {double tolerance = 0.2}) {
+    final expectedWeight = calculateTotalWeight();
+    return (actualWeight - expectedWeight).abs() <= tolerance;
+  }
 }
