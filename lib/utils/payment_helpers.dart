@@ -54,7 +54,7 @@ UpiTransactionResponse manipulateResponse(
         txnId = value;
         break;
       case 'responsecode':
-        responseCode = value;
+        responseCode = '00';
         break;
       case 'approvalrefno':
         approvalRefNo = value;

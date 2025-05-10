@@ -1,0 +1,52 @@
+{
+  "receiptId": "LSRCPT-1746873719775-75251",
+  "user": "F4WVUdEMxUYi7YOUcjlj78BRabv2",
+  "items": [
+    {
+      "barcode": "8901063035027",
+      "name": "Test Item",
+      "brandName": "",
+      "price": 3.0,
+      "weight": 5.0,
+      "imageUrl": "https://example.com/image.jpg",
+      "category": "",
+      "description": ""
+    }
+  ],
+  "store": {
+    "storeId": "0TBbx7tCs4RTnHgXKsJn",
+    "name": "Kiriakos",
+    "description": "Store",
+    "hasTrolleyPairing": false,
+    "location": "Mumbai, Maharashtra",
+    "storeImage": "https://firebasestorage.googleapis.com/v0/b/lineskip-20375.firebasestorage.app/o/storeImage%2FKiriakos.jpg?alt=media&token=90009684-a052-4922-88f0-866ef6a14f56",
+    "visitorForecast": null,
+    "createdAt": "2025-04-29T20:21:21.159360",
+    "storeUpiId": "swagnik1234-3@okaxis",
+    "mobileNumber": "5823691470",
+    "ownerName": "Badri"
+  },
+  "transactionId": "TXNCP80KOTKCX",
+  "paymentDetails": {
+    "totalAmount": 3.0,
+    "tax": 0.0,
+    "discount": 0.0,
+    "createdAt": "2025-05-10T16:11:59.775208"
+  },
+  "transactionDetails": {
+    "userid": "F4WVUdEMxUYi7YOUcjlj78BRabv2",
+    "transactionId": "TXNCP80KOTKCX",
+    "amount": 3.0,
+    "status": "UpiTransactionStatus.success",
+    "transactionRef": "4089904698",
+    "approvalRefNo": "APPBKVARF",
+    "responseCode": "00",
+    "receiverName": "Kiriakos",
+    "receiverUpiAddress": "swagnik1234-3@okaxis",
+    "upiApplication": "",
+    "transactionNote": "Line Skip Payment",
+    "statusEnum": "UpiTransactionStatus.success",
+    "createdAt": "2025-05-10T16:11:59.775190"
+  },
+  "createdAt": "2025-05-10T16:11:59.775285"
+}

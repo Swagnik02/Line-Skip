@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
-import 'package:line_skip/screens/payment/payment_confirmation_page.dart';
 import 'package:line_skip/screens/payment/payment_verification_laoder.dart';
-import 'package:line_skip/utils/constants.dart';
 import 'package:line_skip/utils/payment_helpers.dart';
+import 'package:line_skip/utils/payment_success.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 import 'package:line_skip/widgets/custom_elevated_button.dart';
 import 'package:upi_pay/upi_pay.dart';
@@ -32,6 +31,8 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   String? _upiAddrError;
   final _upiPayPlugin = UpiPay();
   List<ApplicationMeta>? _apps;
+  late UpiTransactionResponse transaction;
+
   bool _isProcessingPayment = false;
 
   @override
@@ -67,8 +68,6 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     final transactionRef = Random.secure().nextInt(1 << 32).toString();
     dev.log("Starting transaction with id $transactionRef");
 
-    late UpiTransactionResponse transaction;
-
     try {
       transaction = await _upiPayPlugin.initiateTransaction(
         amount: cartNotifier.calculateTotalPrice().toString(),
@@ -89,6 +88,8 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
       }
 
       if (transaction.status == UpiTransactionStatus.success) {
+        _success();
+
         _showSnackBar('Transaction successful.');
       } else {
         _showErrorSnackBar('Transaction failed or cancelled.');
@@ -268,8 +269,6 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     final transactionRef = Random.secure().nextInt(1 << 32).toString();
     dev.log("Starting transaction with id $transactionRef");
 
-    late UpiTransactionResponse transaction;
-
     try {
       transaction = simulateSuccessTransactionResponse(transactionRef);
 
@@ -310,17 +309,12 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   }
 
   void _success() {
-    Navigator.pushAndRemoveUntil(
+    final paymentApp = '';
+    success(
       context,
-      MaterialPageRoute(
-        builder: (context) => PaymentConfirmationPage(),
-      ),
-      ModalRoute.withName(authRoute),
+      ref,
+      transaction.rawResponse!,
+      paymentApp,
     );
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => PaymentConfirmationPage(),
-    //     ));
   }
 }
