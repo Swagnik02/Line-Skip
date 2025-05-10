@@ -7,6 +7,7 @@ import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/data/models/user_model.dart';
 import 'package:line_skip/screens/store/store_detail_page.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
+import 'package:line_skip/utils/constants.dart';
 import 'package:shimmer/shimmer.dart';
 
 // Home App Bar with User Greeting
@@ -123,33 +124,43 @@ class LocateStoreSearchBox extends StatelessWidget {
 class QuickOption extends StatelessWidget {
   final IconData icon;
   final String title;
+  final String route;
 
-  const QuickOption({super.key, required this.icon, required this.title});
+  const QuickOption(
+      {super.key,
+      required this.icon,
+      required this.title,
+      required this.route});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(35),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, route);
+      },
+      child: Column(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(35),
+            ),
+            alignment: Alignment.center,
+            child: Icon(
+              icon,
+              size: 35,
+              color: Colors.deepOrangeAccent,
+            ),
           ),
-          alignment: Alignment.center,
-          child: Icon(
-            icon,
-            size: 35,
-            color: Colors.deepOrangeAccent,
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -276,10 +287,14 @@ class QuickOptions extends StatelessWidget {
   const QuickOptions({super.key});
 
   static const options = [
-    {"icon": Icons.leaderboard_sharp, "title": "Best Place"},
-    {"icon": Icons.star_rounded, "title": "Favourites"},
-    {"icon": Icons.receipt_long, "title": "Receipts"},
-    {"icon": Icons.local_offer, "title": "Promos"},
+    {
+      "icon": Icons.leaderboard_sharp,
+      "title": "Best Place",
+      "route": receiptRoute
+    },
+    {"icon": Icons.star_rounded, "title": "Favourites", "route": receiptRoute},
+    {"icon": Icons.receipt_long, "title": "Receipts", "route": receiptRoute},
+    {"icon": Icons.local_offer, "title": "Promos", "route": receiptRoute},
   ];
 
   @override
@@ -290,6 +305,7 @@ class QuickOptions extends StatelessWidget {
         return QuickOption(
           icon: option["icon"] as IconData,
           title: option["title"] as String,
+          route: option["route"] as String,
         );
       }).toList(),
     );

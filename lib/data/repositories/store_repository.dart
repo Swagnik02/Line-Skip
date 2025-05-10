@@ -10,7 +10,7 @@ class StoreRepository {
       // Fetch the stores collection ordered by createdAt
       final snapshot = await _firebaseFirestore
           .collection('stores')
-          .orderBy('createdAt', descending: true) // Optional ordering
+          .orderBy('createdAt', descending: true)
           .get();
 
       // Convert Firestore documents to Store objects

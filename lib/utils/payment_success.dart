@@ -101,6 +101,16 @@ void success(BuildContext context, WidgetRef ref, String responseString,
 
   dev.log(receipt.toJson().toString(), name: 'Receipt JSON');
 
+  // // Save the receipt to Firestore
+  // ref
+  //     .read(receiptProvider.notifier)
+  //     .saveReceipt(receipt)
+  //     .then((_) {
+  //   dev.log('Receipt saved successfully', name: 'Receipt');
+  // }).catchError((error) {
+  //   dev.log('Error saving receipt: $error', name: 'Receipt');
+  // });
+
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(builder: (context) => PaymentConfirmationPage()),

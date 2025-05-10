@@ -10,6 +10,8 @@ const storeSelectionRoute = '/store-selection';
 const trolleyPairingRoute = '/trolley-pairing';
 const cartRoute = '/cart';
 
+const receiptRoute = '/receipt';
+
 // String Constants
 class StringConstants {
   static const String appFullName = 'Line Skip';
