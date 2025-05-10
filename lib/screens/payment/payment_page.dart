@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/cart_provider.dart';
+import 'package:line_skip/providers/receipt_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
 import 'package:line_skip/screens/payment/payment_verification_laoder.dart';
 import 'package:line_skip/utils/payment_helpers.dart';
@@ -308,13 +309,13 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     );
   }
 
-  void _success() {
+  void _success() async {
     final paymentApp = '';
-    success(
-      context,
-      ref,
-      transaction.rawResponse!,
-      paymentApp,
-    );
+
+    final receipt = await generateReceipt(
+        context, ref, transaction.rawResponse!, paymentApp);
+
+    await ref.read(receiptProvider.notifier).saveReceipt(receipt);
+    navigateNextAndClean(context, ref, receipt);
   }
 }

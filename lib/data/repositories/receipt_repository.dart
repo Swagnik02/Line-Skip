@@ -27,7 +27,7 @@ class ReceiptRepository {
     }
   }
 
-  /// Optionally fetch a single receipt by ID
+  /// Fetch a single receipt by ID
   Future<ReceiptModel?> fetchReceiptById(
       String userId, String receiptId) async {
     try {
@@ -46,6 +46,21 @@ class ReceiptRepository {
     } catch (e) {
       print('Error fetching receipt: $e');
       return null;
+    }
+  }
+
+  /// Add a new receipt
+  Future<void> addReceipt(ReceiptModel receipt) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(receipt.user)
+          .collection('receipts')
+          .doc(receipt.receiptId)
+          .set(receipt.toJson());
+    } catch (e) {
+      print('Error adding receipt: $e');
+      rethrow;
     }
   }
 }

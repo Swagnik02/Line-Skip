@@ -13,15 +13,16 @@ import 'package:line_skip/screens/payment/payment_confirmation_page.dart';
 import 'package:line_skip/screens/store/store_page.dart';
 import 'package:line_skip/utils/constants.dart';
 
-void success(BuildContext context, WidgetRef ref, String responseString,
-    String paymentApp) {
+Future<ReceiptModel> generateReceipt(BuildContext context, WidgetRef ref,
+    String responseString, String paymentApp) async {
   final cartNotifier = ref.read(cartItemsProvider.notifier);
   final selectedStore = ref.watch(selectedStoreProvider);
   final cartItems = ref.watch(cartItemsProvider);
 
   final String userid = ref.read(currentUserProvider)!.id;
 
-  if (selectedStore == null) return;
+  // if (selectedStore == null)
+  // break
 
   String transactionId = '';
   String approvalRefNo = '';
@@ -73,7 +74,7 @@ void success(BuildContext context, WidgetRef ref, String responseString,
     transactionRef: txnRef,
     approvalRefNo: approvalRefNo,
     responseCode: responseCode,
-    receiverName: selectedStore.name,
+    receiverName: selectedStore!.name,
     receiverUpiAddress: selectedStore.storeUpiId,
     upiApplication: paymentApp,
     transactionNote: 'Line Skip Payment',
@@ -101,16 +102,14 @@ void success(BuildContext context, WidgetRef ref, String responseString,
 
   dev.log(receipt.toJson().toString(), name: 'Receipt JSON');
 
-  // // Save the receipt to Firestore
-  // ref
-  //     .read(receiptProvider.notifier)
-  //     .saveReceipt(receipt)
-  //     .then((_) {
-  //   dev.log('Receipt saved successfully', name: 'Receipt');
-  // }).catchError((error) {
-  //   dev.log('Error saving receipt: $error', name: 'Receipt');
-  // });
+  return receipt;
+}
 
+void navigateNextAndClean(
+  BuildContext context,
+  WidgetRef ref,
+  ReceiptModel receipt,
+) {
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(builder: (context) => PaymentConfirmationPage()),
@@ -118,7 +117,7 @@ void success(BuildContext context, WidgetRef ref, String responseString,
   );
 // Delay cleanup to the next frame
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    cartNotifier.resetCart();
+    ref.read(cartItemsProvider.notifier).resetCart();
     ref.invalidate(currentPageProvider);
     ref.invalidate(inventoryProvider);
     ref.invalidate(selectedStoreProvider);
