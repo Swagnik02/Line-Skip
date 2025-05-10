@@ -10,6 +10,7 @@ import 'package:line_skip/providers/current_user_provider.dart';
 import 'package:line_skip/providers/inventory_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
 import 'package:line_skip/screens/payment/payment_confirmation_page.dart';
+import 'package:line_skip/screens/store/store_page.dart';
 import 'package:line_skip/utils/constants.dart';
 
 void success(BuildContext context, WidgetRef ref, String responseString,
@@ -108,6 +109,7 @@ void success(BuildContext context, WidgetRef ref, String responseString,
 // Delay cleanup to the next frame
   WidgetsBinding.instance.addPostFrameCallback((_) {
     cartNotifier.resetCart();
+    ref.invalidate(currentPageProvider);
     ref.invalidate(inventoryProvider);
     ref.invalidate(selectedStoreProvider);
     ref.read(bleProvider.notifier).disconnect();

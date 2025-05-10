@@ -4,6 +4,7 @@ import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/providers/store_provider.dart';
 import 'package:line_skip/screens/store/store_page.dart';
 import 'package:line_skip/screens/store/trolley_pairing_screen.dart';
+import 'package:line_skip/utils/constants.dart';
 
 class StoreDetailPage extends ConsumerWidget {
   final Store store;
@@ -153,14 +154,23 @@ class StoreDetailPage extends ConsumerWidget {
       child: ElevatedButton(
         onPressed: () {
           ref.read(selectedStoreProvider.notifier).state = store;
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => store.hasTrolleyPairing
-                  ? TrolleyPairingPage()
-                  : const StorePage(),
-            ),
-          );
+
+          if (store.hasTrolleyPairing) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TrolleyPairingPage(),
+              ),
+            );
+          } else {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => StorePage(),
+              ),
+              ModalRoute.withName(authRoute),
+            );
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.orange,
