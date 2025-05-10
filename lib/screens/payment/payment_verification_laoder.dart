@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class VerificationPage extends StatefulWidget {
-  const VerificationPage({Key? key}) : super(key: key);
+class VerificationLoader extends StatefulWidget {
+  const VerificationLoader({Key? key}) : super(key: key);
 
   @override
-  State<VerificationPage> createState() => _VerificationPageState();
+  State<VerificationLoader> createState() => _VerificationLoaderState();
 }
 
-class _VerificationPageState extends State<VerificationPage>
+class _VerificationLoaderState extends State<VerificationLoader>
     with TickerProviderStateMixin {
   late AnimationController _rotationController;
   late AnimationController _pulseController;

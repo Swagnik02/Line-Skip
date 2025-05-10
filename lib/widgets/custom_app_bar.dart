@@ -82,15 +82,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      // backgroundColor: Colors.transparent,
+      elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        icon: Icon(title == "Payment Confirmation"
+            ? Icons.close_rounded
+            : Icons.arrow_back_ios_new_rounded),
         onPressed: () => Navigator.pop(context),
         color: Colors.white,
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.all(Colors.deepOrangeAccent),
         ),
       ),
-      title: Text(title!),
+      title: Text(
+        title!,
+        style: TextStyle(
+          color: Colors.black,
+        ),
+      ),
     );
   }
 

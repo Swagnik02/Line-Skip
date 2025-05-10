@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
-import 'package:line_skip/screens/payment/verification_page.dart';
+import 'package:line_skip/screens/payment/payment_confirmation_page.dart';
+import 'package:line_skip/screens/payment/payment_verification_laoder.dart';
+import 'package:line_skip/utils/constants.dart';
 import 'package:line_skip/utils/payment_helpers.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 import 'package:line_skip/widgets/custom_elevated_button.dart';
@@ -86,12 +88,10 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         dev.log(transaction.toString(), name: 'Manipulated Response');
       }
 
-      if (transaction.status != UpiTransactionStatus.success) {
-        _showErrorSnackBar('Transaction failed or cancelled.');
+      if (transaction.status == UpiTransactionStatus.success) {
+        _showSnackBar('Transaction successful.');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Transaction successful.')),
-        );
+        _showErrorSnackBar('Transaction failed or cancelled.');
       }
     } catch (e) {
       _showErrorSnackBar('An error occurred during transaction.');
@@ -254,7 +254,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
               ],
             ),
           ),
-          if (_isProcessingPayment) VerificationPage(),
+          if (_isProcessingPayment) VerificationLoader(),
         ],
       ),
     );
@@ -277,12 +277,11 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
 
       await Future.delayed(Duration(seconds: 2));
 
-      if (transaction.status != UpiTransactionStatus.success) {
-        _showErrorSnackBar('Transaction failed or cancelled.');
+      if (transaction.status == UpiTransactionStatus.success) {
+        _success();
+        _showSnackBar('Transaction successful.');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Transaction successful.')),
-        );
+        _showErrorSnackBar('Transaction failed or cancelled.');
       }
     } catch (e) {
       _showErrorSnackBar('An error occurred during transaction.');
@@ -300,5 +299,28 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         backgroundColor: Colors.red,
       ),
     );
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
+  void _success() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentConfirmationPage(),
+      ),
+      ModalRoute.withName(authRoute),
+    );
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => PaymentConfirmationPage(),
+    //     ));
   }
 }
