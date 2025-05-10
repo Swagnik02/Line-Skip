@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconly/iconly.dart';
@@ -5,6 +7,7 @@ import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/data/models/user_model.dart';
 import 'package:line_skip/screens/store/store_detail_page.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
+import 'package:shimmer/shimmer.dart';
 
 // Home App Bar with User Greeting
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -171,39 +174,94 @@ class DestinationCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 280,
+        width: MediaQuery.of(context).size.width * 0.7,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          image: DecorationImage(
-            image: NetworkImage(
-              store.storeImage,
-            ),
-            fit: BoxFit.cover,
-            onError: (exception, stackTrace) {},
-          ),
         ),
         child: Stack(
           children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20), bottom: Radius.circular(20)),
+              child: Image.network(
+                store.storeImage,
+                width: MediaQuery.of(context).size.width * 0.7,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Shimmer.fromColors(
+                    baseColor: Colors.deepOrange.shade100,
+                    highlightColor: Colors.grey.shade100,
+                    child: Container(
+                      width: 70 * MediaQuery.of(context).size.width / 100,
+                      color: Colors.white,
+                    ),
+                  );
+                },
+                errorBuilder: (_, __, ___) => const Icon(Icons.error),
+              ),
+            ),
             Positioned(
-              top: 12,
-              left: 12,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    store.name,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.white,
+              top: 8,
+              left: 8,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    width: MediaQuery.of(context).size.width * 0.7 - 16,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color.fromRGBO(255, 255, 255, 0.2),
+                          Color.fromRGBO(255, 255, 255, 0.5),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.7 - 24,
+                          child: Text(
+                            store.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
                         ),
-                  ),
-                  Text(
-                    store.location,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: const Color.fromRGBO(255, 255, 255, 0.85),
+                        Row(
+                          children: [
+                            Icon(Icons.location_on_rounded,
+                                color:
+                                    const Color.fromRGBO(255, 255, 255, 0.85),
+                                size: 16),
+                            Text(
+                              store.location,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    color: const Color.fromRGBO(
+                                        255, 255, 255, 0.85),
+                                  ),
+                            ),
+                          ],
                         ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
             ),
           ],
@@ -246,7 +304,23 @@ class AvailableStores extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return storeState.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        itemCount: 3,
+        itemBuilder: (context, index) => Shimmer.fromColors(
+          baseColor: Colors.deepOrange.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            margin: const EdgeInsets.only(right: 16),
+            width: 0.7 * MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
+      ),
       error: (err, _) => Center(child: Text("Error: $err")),
       data: (stores) => ListView.builder(
         scrollDirection: Axis.horizontal,
