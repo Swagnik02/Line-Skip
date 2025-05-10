@@ -14,9 +14,7 @@ class StoreRepository {
           .get();
 
       // Convert Firestore documents to Store objects
-      return snapshot.docs
-          .map((doc) => Store.fromJson(doc.data(), doc.id))
-          .toList();
+      return snapshot.docs.map((doc) => Store.fromJson(doc.data())).toList();
     } catch (e) {
       throw Exception('Failed to fetch stores: ${e.toString()}');
     }

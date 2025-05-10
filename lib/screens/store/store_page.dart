@@ -35,7 +35,8 @@ class _StorePageState extends ConsumerState<StorePage> {
   @override
   Widget build(BuildContext context) {
     final selectedStore = ref.watch(selectedStoreProvider);
-    final inventory = ref.watch(inventoryProvider(selectedStore?.docId ?? ''));
+    final inventory =
+        ref.watch(inventoryProvider(selectedStore?.storeId ?? ''));
     final currentIndex = ref.watch(currentPageProvider);
     final cartNotifier = ref.read(cartItemsProvider.notifier);
 
