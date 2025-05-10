@@ -26,7 +26,7 @@ class ReceiptPage extends ConsumerWidget {
                 title: Text('Receipt ID: ${receipt.receiptId}'),
                 subtitle:
                     Text('Total: \$${receipt.totalAmount.toStringAsFixed(2)}'),
-                trailing: Text(receipt.formattedCreatedAt),
+                // trailing: Text(receipt.formattedCreatedAt),
                 onTap: () {
                   // Optional: Navigate to a ReceiptDetailsPage
                 },

@@ -18,15 +18,20 @@ final receiptsProvider =
 
 /// Notifier for saving receipts
 class ReceiptNotifier extends StateNotifier<AsyncValue<void>> {
+  final Ref ref;
   final ReceiptRepository _repository;
 
-  ReceiptNotifier(this._repository) : super(const AsyncData(null));
+  ReceiptNotifier(this.ref, this._repository) : super(const AsyncData(null));
 
   Future<void> saveReceipt(ReceiptModel receipt) async {
     state = const AsyncLoading();
     try {
       await _repository.addReceipt(receipt);
       state = const AsyncData(null);
+
+      // Invalidate the receiptsProvider for this user
+      ref.invalidate(receiptsProvider(receipt.user));
+
       dev.log('Receipt saved successfully', name: 'Receipt');
     } catch (error, stack) {
       state = AsyncError(error, stack);
@@ -39,5 +44,5 @@ class ReceiptNotifier extends StateNotifier<AsyncValue<void>> {
 final receiptProvider =
     StateNotifierProvider<ReceiptNotifier, AsyncValue<void>>((ref) {
   final repository = ref.read(receiptRepositoryProvider);
-  return ReceiptNotifier(repository);
+  return ReceiptNotifier(ref, repository);
 });

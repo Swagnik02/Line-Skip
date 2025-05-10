@@ -13,8 +13,12 @@ import 'package:line_skip/screens/payment/payment_confirmation_page.dart';
 import 'package:line_skip/screens/store/store_page.dart';
 import 'package:line_skip/utils/constants.dart';
 
-Future<ReceiptModel> generateReceipt(BuildContext context, WidgetRef ref,
-    String responseString, String paymentApp) async {
+Future<ReceiptModel> generateReceipt(
+  BuildContext context,
+  WidgetRef ref,
+  String responseString,
+  String paymentApp,
+) async {
   final cartNotifier = ref.read(cartItemsProvider.notifier);
   final selectedStore = ref.watch(selectedStoreProvider);
   final cartItems = ref.watch(cartItemsProvider);

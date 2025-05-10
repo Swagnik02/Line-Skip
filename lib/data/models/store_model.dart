@@ -27,7 +27,6 @@ class Store {
     this.ownerName = '',
   });
 
-  // Convert Store object to a map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'storeId': storeId,
@@ -37,15 +36,22 @@ class Store {
       'location': location,
       'storeImage': storeImage.isNotEmpty ? storeImage : null,
       'visitorForecast': visitorForecast.isNotEmpty ? visitorForecast : null,
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': createdAt != null
+          ? Timestamp.fromDate(createdAt!)
+          : FieldValue.serverTimestamp(),
       'storeUpiId': storeUpiId.isNotEmpty ? storeUpiId : null,
       'mobileNumber': mobileNumber.isNotEmpty ? mobileNumber : null,
       'ownerName': ownerName.isNotEmpty ? ownerName : null,
     };
   }
 
-  // Factory constructor to create Store from Firestore data
   factory Store.fromJson(Map<String, dynamic> json) {
+    final dynamic timestamp = json['createdAt'];
+    DateTime? createdAt;
+    if (timestamp is Timestamp) {
+      createdAt = timestamp.toDate();
+    }
+
     return Store(
       storeId: json['storeId'],
       name: json['name'] ?? 'Unknown Store',
@@ -57,14 +63,13 @@ class Store {
               ?.map((e) => e as int)
               .toList() ??
           [],
-      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      createdAt: createdAt,
       storeUpiId: json['storeUpiId'] ?? '',
       mobileNumber: json['mobileNumber'] ?? '',
       ownerName: json['ownerName'] ?? '',
     );
   }
 
-  // Convert Store object to JSON for Firestore
   Map<String, dynamic> toJson() {
     return {
       'storeId': storeId,
@@ -74,10 +79,10 @@ class Store {
       'location': location,
       'storeImage': storeImage.isNotEmpty ? storeImage : null,
       'visitorForecast': visitorForecast.isNotEmpty ? visitorForecast : null,
-      'createdAt': createdAt?.toIso8601String(),
       'storeUpiId': storeUpiId.isNotEmpty ? storeUpiId : null,
       'mobileNumber': mobileNumber.isNotEmpty ? mobileNumber : null,
       'ownerName': ownerName.isNotEmpty ? ownerName : null,
+      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
     };
   }
 }

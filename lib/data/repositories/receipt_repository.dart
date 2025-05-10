@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/receipt_model.dart';
 
@@ -22,7 +24,7 @@ class ReceiptRepository {
         return ReceiptModel.fromJson(data);
       }).toList();
     } catch (e) {
-      print('Error fetching receipts: $e');
+      log('Error fetching receipts: $e');
       return [];
     }
   }

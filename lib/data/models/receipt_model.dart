@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:line_skip/data/models/item_model.dart';
 import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/data/models/transaction_model.dart';
@@ -28,9 +29,6 @@ class ReceiptModel {
 
   double get totalAmount => items.fold(0.0, (sum, item) => sum + item.price);
 
-  String get formattedCreatedAt =>
-      '${createdAt.day}/${createdAt.month}/${createdAt.year} ${createdAt.hour}:${createdAt.minute}';
-
   Map<String, dynamic> toJson() => {
         'receiptId': receiptId,
         'user': user,
@@ -39,20 +37,27 @@ class ReceiptModel {
         'transactionId': transactionId,
         'paymentDetails': paymentDetails.toJson(),
         'transactionDetails': transactionDetails.toJson(),
-        'createdAt': createdAt.toIso8601String(),
+        'createdAt': Timestamp.fromDate(createdAt),
       };
 
-  factory ReceiptModel.fromJson(Map<String, dynamic> json) => ReceiptModel(
-        receiptId: json['receiptId'],
-        user: json['user'],
-        items: (json['items'] as List).map((e) => Item.fromJson(e)).toList(),
-        store: Store.fromJson(json['store']),
-        transactionId: json['transactionId'],
-        paymentDetails: PaymentDetails.fromJson(json['paymentDetails']),
-        transactionDetails:
-            TransactionModel.fromJson(json['transactionDetails']),
-        createdAt: DateTime.parse(json['createdAt']),
-      );
+  factory ReceiptModel.fromJson(Map<String, dynamic> json) {
+    final dynamic timestamp = json['createdAt'];
+    DateTime? createdAt;
+    if (timestamp is Timestamp) {
+      createdAt = timestamp.toDate();
+    }
+
+    return ReceiptModel(
+      receiptId: json['receiptId'],
+      user: json['user'],
+      items: (json['items'] as List).map((e) => Item.fromJson(e)).toList(),
+      store: Store.fromJson(json['store']),
+      transactionId: json['transactionId'],
+      paymentDetails: PaymentDetails.fromJson(json['paymentDetails']),
+      transactionDetails: TransactionModel.fromJson(json['transactionDetails']),
+      createdAt: createdAt,
+    );
+  }
 }
 
 String _generateReceiptId() {
