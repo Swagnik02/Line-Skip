@@ -10,6 +10,7 @@ class ReceiptModel {
   final String user;
   final List<Item> items;
   final Store store;
+  final double invoiceTotal;
   final String transactionId;
   final PaymentDetails paymentDetails;
   final TransactionModel transactionDetails;
@@ -20,6 +21,7 @@ class ReceiptModel {
     required this.user,
     required this.items,
     required this.store,
+    required this.invoiceTotal,
     required this.transactionId,
     required this.paymentDetails,
     required this.transactionDetails,
@@ -34,6 +36,7 @@ class ReceiptModel {
         'user': user,
         'items': items.map((i) => i.toJson()).toList(),
         'store': store.toJson(),
+        'invoiceTotal': invoiceTotal,
         'transactionId': transactionId,
         'paymentDetails': paymentDetails.toJson(),
         'transactionDetails': transactionDetails.toJson(),
@@ -52,6 +55,7 @@ class ReceiptModel {
       user: json['user'],
       items: (json['items'] as List).map((e) => Item.fromJson(e)).toList(),
       store: Store.fromJson(json['store']),
+      invoiceTotal: (json['invoiceTotal'] as num).toDouble(),
       transactionId: json['transactionId'],
       paymentDetails: PaymentDetails.fromJson(json['paymentDetails']),
       transactionDetails: TransactionModel.fromJson(json['transactionDetails']),

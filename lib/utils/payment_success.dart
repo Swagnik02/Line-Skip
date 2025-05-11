@@ -98,8 +98,9 @@ Future<ReceiptModel> generateReceipt(
 
   final receipt = ReceiptModel(
     user: userid,
-    transactionId: transactionDetail.transactionId,
 
+    invoiceTotal: paymentDetails.invoiceTotal,
+    transactionId: transactionDetail.transactionId,
     //store
     items: cartItems,
     store: selectedStore,
