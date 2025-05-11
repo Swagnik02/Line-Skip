@@ -8,6 +8,7 @@ import 'payment_details_model.dart';
 class ReceiptModel {
   final String receiptId;
   final String user;
+  final String userName;
   final List<Item> items;
   final Store store;
   final double invoiceTotal;
@@ -19,6 +20,7 @@ class ReceiptModel {
   ReceiptModel({
     String? receiptId,
     required this.user,
+    required this.userName,
     required this.items,
     required this.store,
     required this.invoiceTotal,
@@ -26,22 +28,23 @@ class ReceiptModel {
     required this.paymentDetails,
     required this.transactionDetails,
     DateTime? createdAt,
-  })  : receiptId = receiptId ?? _generateReceiptId(),
-        createdAt = createdAt ?? DateTime.now();
+  }) : receiptId = receiptId ?? _generateReceiptId(),
+       createdAt = createdAt ?? DateTime.now();
 
   double get totalAmount => items.fold(0.0, (sum, item) => sum + item.price);
 
   Map<String, dynamic> toJson() => {
-        'receiptId': receiptId,
-        'user': user,
-        'items': items.map((i) => i.toJson()).toList(),
-        'store': store.toJson(),
-        'invoiceTotal': invoiceTotal,
-        'transactionId': transactionId,
-        'paymentDetails': paymentDetails.toJson(),
-        'transactionDetails': transactionDetails.toJson(),
-        'createdAt': Timestamp.fromDate(createdAt),
-      };
+    'receiptId': receiptId,
+    'user': user,
+    'userName': userName,
+    'items': items.map((i) => i.toJson()).toList(),
+    'store': store.toJson(),
+    'invoiceTotal': invoiceTotal,
+    'transactionId': transactionId,
+    'paymentDetails': paymentDetails.toJson(),
+    'transactionDetails': transactionDetails.toJson(),
+    'createdAt': Timestamp.fromDate(createdAt),
+  };
 
   factory ReceiptModel.fromJson(Map<String, dynamic> json) {
     final dynamic timestamp = json['createdAt'];
@@ -53,6 +56,7 @@ class ReceiptModel {
     return ReceiptModel(
       receiptId: json['receiptId'],
       user: json['user'],
+      userName: json['userName'],
       items: (json['items'] as List).map((e) => Item.fromJson(e)).toList(),
       store: Store.fromJson(json['store']),
       invoiceTotal: (json['invoiceTotal'] as num).toDouble(),

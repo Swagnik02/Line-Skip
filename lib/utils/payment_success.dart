@@ -23,7 +23,8 @@ Future<ReceiptModel> generateReceipt(
   final selectedStore = ref.watch(selectedStoreProvider);
   final cartItems = ref.watch(cartItemsProvider);
 
-  final String userid = ref.read(currentUserProvider)!.id;
+  final String userId = ref.read(currentUserProvider)!.id;
+  final String userName = ref.read(currentUserProvider)!.name;
 
   // if (selectedStore == null)
   // break
@@ -71,10 +72,11 @@ Future<ReceiptModel> generateReceipt(
   }
 
   final transactionDetail = TransactionModel(
-    userid: userid,
+    userid: userId,
     transactionId: transactionId,
-    amount:
-        double.parse(cartNotifier.calculateInvoiceTotal().toStringAsFixed(2)),
+    amount: double.parse(
+      cartNotifier.calculateInvoiceTotal().toStringAsFixed(2),
+    ),
     status: UpiTransactionStatus.success.toString(),
     transactionRef: txnRef,
     approvalRefNo: approvalRefNo,
@@ -87,17 +89,21 @@ Future<ReceiptModel> generateReceipt(
   );
 
   final paymentDetails = PaymentDetails(
-    netAmount:
-        double.parse(cartNotifier.calculateNetAmount().toStringAsFixed(2)),
-    taxAmount:
-        double.parse(cartNotifier.calculateTaxAmount().toStringAsFixed(2)),
-    invoiceTotal:
-        double.parse(cartNotifier.calculateInvoiceTotal().toStringAsFixed(2)),
+    netAmount: double.parse(
+      cartNotifier.calculateNetAmount().toStringAsFixed(2),
+    ),
+    taxAmount: double.parse(
+      cartNotifier.calculateTaxAmount().toStringAsFixed(2),
+    ),
+    invoiceTotal: double.parse(
+      cartNotifier.calculateInvoiceTotal().toStringAsFixed(2),
+    ),
     discount: 0.0,
   );
 
   final receipt = ReceiptModel(
-    user: userid,
+    user: userId,
+    userName: userName,
 
     invoiceTotal: paymentDetails.invoiceTotal,
     transactionId: transactionDetail.transactionId,
@@ -123,13 +129,11 @@ void navigateNextAndClean(
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(
-      builder: (context) => PaymentConfirmationPage(
-        receipt: receipt,
-      ),
+      builder: (context) => PaymentConfirmationPage(receipt: receipt),
     ),
     ModalRoute.withName(authRoute),
   );
-// Delay cleanup to the next frame
+  // Delay cleanup to the next frame
   WidgetsBinding.instance.addPostFrameCallback((_) {
     ref.read(cartItemsProvider.notifier).resetCart();
     ref.invalidate(currentPageProvider);
