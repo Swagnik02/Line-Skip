@@ -5,6 +5,7 @@ class Item {
   String name;
   String brandName;
   double price;
+  double tax;
   double weight;
   String imageUrl;
   String category;
@@ -16,11 +17,12 @@ class Item {
     this.name = "",
     this.brandName = "",
     this.price = 0,
+    double? tax,
     this.weight = 0,
     this.imageUrl = "",
     this.category = "",
     this.description = "",
-  });
+  }) : tax = 0.05 * price;
 
   // Convert to JSON
   Map<String, dynamic> toJson() {
@@ -29,6 +31,7 @@ class Item {
       'name': name,
       'brandName': brandName,
       'price': price,
+      'tax': tax,
       'weight': weight,
       'imageUrl': imageUrl,
       'category': category,
@@ -43,6 +46,7 @@ class Item {
       name: json['name'] ?? '',
       brandName: json['brandName'] ?? '',
       price: json['price'] ?? 0.0,
+      tax: json['tax'] ?? 0.0,
       weight: json['weight'] ?? 0.0,
       imageUrl: json['imageUrl'] ?? '',
       category: json['category'] ?? '',
@@ -59,6 +63,7 @@ class Item {
       name: data['name'] ?? '',
       brandName: data['brandName'] ?? '',
       price: data['price']?.toDouble() ?? 0.0,
+      tax: data['tax']?.toDouble() ?? 0.0,
       weight: data['weight']?.toDouble() ?? 0.0,
       imageUrl: data['imageUrl'] ?? '',
       category: data['category'] ?? '',
@@ -73,6 +78,7 @@ class Item {
       'name': name,
       'brandName': brandName,
       'price': price,
+      'tax': tax,
       'weight': weight,
       'imageUrl': imageUrl,
       'category': category,
@@ -86,6 +92,7 @@ class Item {
     String? name,
     String? brandName,
     double? price,
+    double? tax,
     double? weight,
     String? imageUrl,
     String? category,

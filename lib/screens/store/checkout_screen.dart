@@ -59,7 +59,7 @@ class CheckoutPage extends ConsumerWidget {
                                   ),
                         ),
                         Text(
-                          "₹ ${cartNotifier.calculateTotalPrice()}",
+                          "₹ ${cartNotifier.calculateNetAmount()}",
                           style:
                               Theme.of(context).textTheme.bodyLarge?.copyWith(
                                     color: Colors.white,

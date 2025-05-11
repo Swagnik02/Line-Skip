@@ -73,7 +73,8 @@ Future<ReceiptModel> generateReceipt(
   final transactionDetail = TransactionModel(
     userid: userid,
     transactionId: transactionId,
-    amount: cartNotifier.calculateTotalPrice(),
+    amount:
+        double.parse(cartNotifier.calculateInvoiceTotal().toStringAsFixed(2)),
     status: UpiTransactionStatus.success.toString(),
     transactionRef: txnRef,
     approvalRefNo: approvalRefNo,
@@ -86,8 +87,12 @@ Future<ReceiptModel> generateReceipt(
   );
 
   final paymentDetails = PaymentDetails(
-    totalAmount: cartNotifier.calculateTotalPrice(),
-    tax: 0.0,
+    netAmount:
+        double.parse(cartNotifier.calculateNetAmount().toStringAsFixed(2)),
+    taxAmount:
+        double.parse(cartNotifier.calculateTaxAmount().toStringAsFixed(2)),
+    invoiceTotal:
+        double.parse(cartNotifier.calculateInvoiceTotal().toStringAsFixed(2)),
     discount: 0.0,
   );
 
@@ -116,7 +121,11 @@ void navigateNextAndClean(
 ) {
   Navigator.pushAndRemoveUntil(
     context,
-    MaterialPageRoute(builder: (context) => PaymentConfirmationPage()),
+    MaterialPageRoute(
+      builder: (context) => PaymentConfirmationPage(
+        receipt: receipt,
+      ),
+    ),
     ModalRoute.withName(authRoute),
   );
 // Delay cleanup to the next frame

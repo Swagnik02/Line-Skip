@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:line_skip/data/models/receipt_model.dart';
+import 'package:line_skip/utils/helpers.dart';
 import 'package:line_skip/widgets/confirmation_widgets.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 
 class PaymentConfirmationPage extends StatefulWidget {
-  const PaymentConfirmationPage({super.key});
+  final ReceiptModel receipt;
+  const PaymentConfirmationPage({
+    super.key,
+    required this.receipt,
+  });
 
   @override
   State<PaymentConfirmationPage> createState() =>
@@ -78,18 +84,6 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
 
   @override
   Widget build(BuildContext context) {
-    const labelStyle = TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Colors.black45,
-      fontSize: 16,
-    );
-
-    const valueStyle = TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Colors.black87,
-      fontSize: 16,
-    );
-
     double circleRadius = 50.0;
 
     return Scaffold(
@@ -122,8 +116,6 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
                           child: _paymentDetailsCard(
                             spacingFromTop,
                             circleRadius,
-                            labelStyle,
-                            valueStyle,
                           ),
                         ),
                       ),
@@ -201,8 +193,13 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
     );
   }
 
-  Container _paymentDetailsCard(double spacingFromTop, double circleRadius,
-      TextStyle labelStyle, TextStyle valueStyle) {
+  Container _paymentDetailsCard(
+    double spacingFromTop,
+    double circleRadius,
+  ) {
+    final receipt = widget.receipt;
+    final formattedDate = formatReceiptDate(receipt.createdAt);
+
     return Container(
       margin: EdgeInsets.only(top: spacingFromTop),
       padding: EdgeInsets.only(
@@ -233,23 +230,24 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            "₹1200",
-            style: TextStyle(
+          Text(
+            receipt.paymentDetails.invoiceTotal.toString(),
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.black,
               fontSize: 24,
             ),
           ),
           const SizedBox(height: 16),
-          buildRow('Date', '31 Dec 2025', labelStyle, valueStyle),
-          buildRow('Details', 'Residential', labelStyle, valueStyle),
-          buildRow('Reference num', '1234567890', labelStyle, valueStyle),
-          buildRow('Account', 'Neeraj', labelStyle, valueStyle),
+          buildRow('Date', formattedDate),
+          buildRow('Details', 'Residential'),
+          buildRow('Txn num', receipt.transactionId),
+          buildRow('Account', receipt.transactionDetails.receiverName),
           const Divider(height: 32),
-          buildRow('Total Payment', '₹1200', labelStyle, valueStyle),
-          buildRow('Tax', '₹25', labelStyle, valueStyle),
-          buildRow('Total', '₹1225', labelStyle, valueStyle),
+          buildRow('Net Amount', receipt.paymentDetails.netAmount.toString()),
+          buildRow('Tax', receipt.paymentDetails.taxAmount.toString()),
+          buildRow(
+              'Invoice Total', receipt.paymentDetails.invoiceTotal.toString()),
         ],
       ),
     );

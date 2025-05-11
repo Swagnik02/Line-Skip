@@ -3,16 +3,28 @@ import 'package:flutter/material.dart';
 Widget buildRow(
   String label,
   String value,
-  TextStyle labelStyle,
-  TextStyle valueStyle,
 ) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: labelStyle),
-        Text(value, style: valueStyle),
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black45,
+            fontSize: 16,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+            fontSize: 16,
+          ),
+        ),
       ],
     ),
   );
@@ -34,7 +46,10 @@ Widget buildButton({
           style: style,
           onPressed: onPressed,
           child: Text(label,
-              style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                color: textColor,
+                fontWeight: FontWeight.bold,
+              )),
         )
       : FilledButton(
           style: style,

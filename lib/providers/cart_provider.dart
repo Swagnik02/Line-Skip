@@ -49,9 +49,19 @@ class CartNotifier extends StateNotifier<List<Item>> {
     cartRepository.updateItemQuantity(barcode, weight);
   }
 
-  // Calculate total price
-  double calculateTotalPrice() {
+  // Calculate net price
+  double calculateNetAmount() {
     return state.fold(0, (sum, item) => sum + item.price);
+  }
+
+  // calculate total
+  double calculateTaxAmount() {
+    return state.fold(0, (sum, item) => sum + item.tax);
+  }
+
+  // calculate invoice total
+  double calculateInvoiceTotal() {
+    return state.fold(0, (sum, item) => sum + item.price + item.tax);
   }
 
   // Calculate unique item count in the cart

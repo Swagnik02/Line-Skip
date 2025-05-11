@@ -1,29 +1,30 @@
 class PaymentDetails {
-  final double totalAmount;
-  final double tax;
+  final double netAmount;
+  final double taxAmount;
   final double discount;
+  final double invoiceTotal;
   final DateTime createdAt;
 
   PaymentDetails({
-    required this.totalAmount,
-    required this.tax,
+    required this.netAmount,
+    required this.taxAmount,
     required this.discount,
+    required this.invoiceTotal,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
-  double get totalPayable => totalAmount + tax;
-
   Map<String, dynamic> toJson() => {
-        'totalAmount': totalAmount,
-        'tax': tax,
+        'netAmount': netAmount,
+        'taxAmount': taxAmount,
+        'invoiceTotal': invoiceTotal,
         'discount': discount,
-        'createdAt':
-            createdAt.toIso8601String(), // This is for JSON serialization
+        'createdAt': createdAt.toIso8601String(),
       };
 
   factory PaymentDetails.fromJson(Map<String, dynamic> json) => PaymentDetails(
-        totalAmount: json['totalAmount'],
-        tax: json['tax'],
+        netAmount: json['netAmount'],
+        taxAmount: json['taxAmount'],
+        invoiceTotal: json['invoiceTotal'],
         discount: json['discount'],
         createdAt: DateTime.parse(json['createdAt']),
       );
