@@ -66,13 +66,15 @@ class StoreDetailPage extends ConsumerWidget {
           // Back Button
           Positioned(
             top: 40,
-            left: 16,
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.black),
-                onPressed: () => Navigator.pop(context),
+            left: 8,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back_ios_new_rounded),
+              onPressed: () => Navigator.pop(context),
+              color: Colors.white,
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                  Colors.deepOrangeAccent,
+                ),
               ),
             ),
           ),
@@ -96,8 +98,10 @@ class StoreDetailPage extends ConsumerWidget {
             Row(
               children: [
                 const Icon(Icons.location_on, size: 18, color: Colors.orange),
-                Text(" ${store.location}",
-                    style: const TextStyle(color: Colors.grey)),
+                Text(
+                  " ${store.location}",
+                  style: const TextStyle(color: Colors.grey),
+                ),
               ],
             ),
           ],
@@ -158,16 +162,12 @@ class StoreDetailPage extends ConsumerWidget {
           if (store.hasTrolleyPairing) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => TrolleyPairingPage(),
-              ),
+              MaterialPageRoute(builder: (context) => TrolleyPairingPage()),
             );
           } else {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                builder: (context) => StorePage(),
-              ),
+              MaterialPageRoute(builder: (context) => StorePage()),
               ModalRoute.withName(authRoute),
             );
           }
@@ -207,7 +207,7 @@ class VisitorForecastChart extends StatelessWidget {
       "2PM",
       "4PM",
       "6PM",
-      "8PM"
+      "8PM",
     ];
 
     return Column(
@@ -231,21 +231,22 @@ class VisitorForecastChart extends StatelessWidget {
                     width: 20,
                     height: (forecastValues[index] * 1.5).toDouble(),
                     decoration: BoxDecoration(
-                      color: index == highlightedIndex
-                          ? Colors.orange
-                          : Colors.orange.shade200,
+                      color:
+                          index == highlightedIndex
+                              ? Colors.orange
+                              : Colors.orange.shade200,
                       borderRadius: BorderRadius.circular(8),
-                      border: index == highlightedIndex
-                          ? Border.all(
-                              color: Colors.white.withOpacity(0.5), width: 2)
-                          : null,
+                      border:
+                          index == highlightedIndex
+                              ? Border.all(
+                                color: Colors.white.withOpacity(0.5),
+                                width: 2,
+                              )
+                              : null,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    times[index],
-                    style: const TextStyle(fontSize: 10),
-                  ),
+                  Text(times[index], style: const TextStyle(fontSize: 10)),
                 ],
               ),
             ),
