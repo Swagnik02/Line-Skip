@@ -29,6 +29,7 @@ class _StorePageState extends ConsumerState<StorePage> {
     ref.invalidate(inventoryProvider);
 
     ref.read(bleProvider.notifier).disconnect();
+    ref.invalidate(cartItemsProvider);
     super.dispose();
   }
 
