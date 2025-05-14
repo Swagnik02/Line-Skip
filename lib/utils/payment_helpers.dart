@@ -3,13 +3,16 @@ import 'dart:math';
 import 'package:upi_pay/types/response.dart';
 
 UpiTransactionResponse simulateSuccessTransactionResponse(
-    String transactionRef) {
+  String transactionRef,
+) {
   final random = Random();
 
   String generateRandomString(int length) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return List.generate(length, (index) => chars[random.nextInt(chars.length)])
-        .join();
+    return List.generate(
+      length,
+      (index) => chars[random.nextInt(chars.length)],
+    ).join();
   }
 
   String txnId = 'TXN${generateRandomString(10)}';
@@ -34,7 +37,9 @@ String? validateUpiAddress(String value) {
 }
 
 UpiTransactionResponse manipulateResponse(
-    String responseString, String txnRef) {
+  String responseString,
+  String txnRef,
+) {
   String txnId = '';
   String approvalRefNo = '';
 
@@ -79,8 +84,10 @@ UpiTransactionResponse manipulateResponse(
 
   String generateRandomString(int length) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return List.generate(length, (index) => chars[random.nextInt(chars.length)])
-        .join();
+    return List.generate(
+      length,
+      (index) => chars[random.nextInt(chars.length)],
+    ).join();
   }
 
   if (txnId.isEmpty) {
@@ -94,7 +101,8 @@ UpiTransactionResponse manipulateResponse(
     responseCode = '00';
   }
 
-  final manipulatedResponse = 'txnId=$txnId'
+  final manipulatedResponse =
+      'txnId=$txnId'
       '&responseCode=${responseCode.isNotEmpty ? responseCode : '00'}'
       '&approvalRefNo=$approvalRefNo'
       '&status=${status.name}'

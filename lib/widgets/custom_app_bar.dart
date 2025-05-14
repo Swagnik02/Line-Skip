@@ -19,10 +19,11 @@ AppBar customLineSkipAppBar({Widget? leading, List<Widget>? actions}) {
             height: 0.8,
             fontFamily: 'Gagalin',
             fontSize: 120,
-            foreground: Paint()
-              ..style = PaintingStyle.stroke
-              ..strokeWidth = 6
-              ..color = const Color.fromARGB(255, 73, 73, 73),
+            foreground:
+                Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 6
+                  ..color = const Color.fromARGB(255, 73, 73, 73),
           ),
         ),
         // Inner text
@@ -70,36 +71,30 @@ AppBar customLineSkipAppBar({Widget? leading, List<Widget>? actions}) {
 //     ),
 //   );
 // }
-
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({
-    super.key,
-    this.title = "",
-  });
+  const CustomAppBar({super.key, this.title = "", this.actions});
 
   final String? title;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      // backgroundColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
-        icon: Icon(title == "Payment Confirmation"
-            ? Icons.close_rounded
-            : Icons.arrow_back_ios_new_rounded),
+        icon: Icon(
+          title == "Payment Confirmation"
+              ? Icons.close_rounded
+              : Icons.arrow_back_ios_new_rounded,
+        ),
         onPressed: () => Navigator.pop(context),
         color: Colors.white,
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.all(Colors.deepOrangeAccent),
         ),
       ),
-      title: Text(
-        title!,
-        style: TextStyle(
-          color: Colors.black,
-        ),
-      ),
+      actions: actions,
+      title: Text(title ?? "", style: const TextStyle(color: Colors.black)),
     );
   }
 

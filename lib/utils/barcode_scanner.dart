@@ -26,21 +26,24 @@ void showError(BuildContext context, String errorMessage) {
 }
 
 // Function to handle scanning and adding items to the cart
-Future<void> scanToAddItems(BuildContext context,
-    AsyncValue<List<Item>> inventoryState, WidgetRef ref) async {
+Future<void> scanToAddItems(
+  BuildContext context,
+  AsyncValue<List<Item>> inventoryState,
+  WidgetRef ref,
+) async {
   // final barcode = '8901063035027';
-  if (kDebugMode) {
-    Item item = Item(
-      barcode: '8901063035027',
-      name: 'Test Item',
-      price: 3.0,
-      weight: 5.0,
-      imageUrl: 'https://example.com/image.jpg',
-    );
+  // if (kDebugMode) {
+  //   Item item = Item(
+  //     barcode: '8901063035027',
+  //     name: 'Test Item',
+  //     price: 3.0,
+  //     weight: 5.0,
+  //     imageUrl: 'https://example.com/image.jpg',
+  //   );
 
-    ref.read(cartItemsProvider.notifier).addItem(item);
-    return;
-  }
+  //   ref.read(cartItemsProvider.notifier).addItem(item);
+  //   return;
+  // }
 
   final barcode = await scanBarcode(context);
 
@@ -71,7 +74,10 @@ Future<void> scanToAddItems(BuildContext context,
 
 // Function to handle scanning and removing items from the cart
 Future<void> scanToRemoveItems(
-    BuildContext context, Item item, CartNotifier itemListNotifier) async {
+  BuildContext context,
+  Item item,
+  CartNotifier itemListNotifier,
+) async {
   if (kDebugMode) {
     itemListNotifier.removeItem(item.barcode);
     return;

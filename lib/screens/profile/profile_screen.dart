@@ -14,63 +14,86 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: const CustomAppBar(title: 'Profile'),
-      body: user == null
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Profile Image
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.deepOrangeAccent.shade100,
-                    backgroundImage: (user.profileImage != null &&
-                            user.profileImage!.isNotEmpty)
-                        ? NetworkImage(user.profileImage!)
-                        : null,
-                    child: (user.profileImage == null ||
-                            user.profileImage!.isEmpty)
-                        ? const Icon(Icons.person,
-                            size: 50, color: Colors.white)
-                        : null,
-                  ),
-                  const SizedBox(height: 16),
+      body:
+          user == null
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Profile Image
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.deepOrangeAccent.shade100,
+                      backgroundImage:
+                          (user.profileImage != null &&
+                                  user.profileImage!.isNotEmpty)
+                              ? NetworkImage(user.profileImage!)
+                              : null,
+                      child:
+                          (user.profileImage == null ||
+                                  user.profileImage!.isEmpty)
+                              ? const Icon(
+                                Icons.person,
+                                size: 50,
+                                color: Colors.white,
+                              )
+                              : null,
+                    ),
+                    const SizedBox(height: 16),
 
-                  // User Name
-                  Text(
-                    user.name.isNotEmpty ? user.name : "No Name Provided",
-                    style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
+                    // User Name
+                    Text(
+                      user.name.isNotEmpty ? user.name : "No Name Provided",
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
 
-                  // User Email
-                  Text(
-                    user.email.isNotEmpty ? user.email : "No Email Provided",
-                    style: const TextStyle(fontSize: 16, color: Colors.black54),
-                  ),
-                  const SizedBox(height: 20),
+                    // User Email
+                    Text(
+                      user.email.isNotEmpty ? user.email : "No Email Provided",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      user.phoneNumber,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
 
-                  // Action Buttons
-                  _profileOption(Icons.edit, "Edit Profile", () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return ProfileInputPage();
-                    }));
-                  }),
-                  _profileOption(Icons.lock, "Change Password", () {
-                    // TODO: Implement password change
-                  }),
-                  _profileOption(Icons.logout, "Logout", () {
-                    final user = FirebaseAuth.instance.currentUser;
-                    if (user != null) {
-                      FirebaseAuth.instance.signOut();
-                    }
-                  }),
-                ],
+                    // Action Buttons
+                    _profileOption(Icons.edit, "Edit Profile", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return ProfileInputPage();
+                          },
+                        ),
+                      );
+                    }),
+                    _profileOption(Icons.lock, "Change Password", () {
+                      // TODO: Implement password change
+                    }),
+                    _profileOption(Icons.logout, "Logout", () {
+                      final user = FirebaseAuth.instance.currentUser;
+                      if (user != null) {
+                        FirebaseAuth.instance.signOut();
+                      }
+                    }),
+                  ],
+                ),
               ),
-            ),
     );
   }
 

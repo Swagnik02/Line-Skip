@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +13,7 @@ import 'package:line_skip/widgets/custom_app_bar.dart';
 import 'package:line_skip/widgets/custom_elevated_button.dart';
 import 'package:upi_pay/upi_pay.dart';
 
-bool kDemoMode = true;
-
-enum PaymentMethod {
-  Card,
-  GooglePay,
-  UPI,
-}
+enum PaymentMethod { Card, GooglePay, UPI }
 // Keep your imports the same
 
 class PaymentPage extends ConsumerStatefulWidget {
@@ -31,6 +26,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   int? _selectedUpiAppIndex;
   String? _upiAddrError;
   bool _isProcessingPayment = false;
+  bool _isSimulatePayment = kDebugMode;
 
   final _upiPayPlugin = UpiPay();
   List<ApplicationMeta>? _apps;
@@ -81,11 +77,15 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         transactionNote: 'Line Skip Payment',
       );
 
-      if (kDemoMode) {
-        await Future.delayed(Duration(seconds: 2));
-        transaction =
-            manipulateResponse(transaction.rawResponse!, transactionRef);
-      }
+      // Upi transaction manipulation, comment out in production
+      await Future.delayed(Duration(seconds: 2));
+      transaction = manipulateResponse(
+        transaction.rawResponse!,
+        transactionRef,
+      );
+      // End of manipulation
+
+      dev.log(transaction.toString(), name: 'UPI Transaction');
 
       _handleTransactionStatus(transaction.status);
     } catch (_) {
@@ -160,9 +160,10 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   }
 
   Future<void> _processSuccess() async {
-    final paymentApp = _selectedUpiAppIndex != null
-        ? _apps![_selectedUpiAppIndex!].upiApplication.getAppName()
-        : 'UPI';
+    final paymentApp =
+        _selectedUpiAppIndex != null
+            ? _apps![_selectedUpiAppIndex!].upiApplication.getAppName()
+            : 'UPI';
     final receipt = await generateReceipt(
       context,
       ref,
@@ -180,8 +181,10 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 24),
-        Text('Available UPI Apps',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(
+          'Available UPI Apps',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         SizedBox(height: 12),
         ..._apps!.asMap().entries.map((entry) {
           final index = entry.key;
@@ -216,7 +219,19 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     final total = cart.calculateInvoiceTotal().toStringAsFixed(2);
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Payment Options'),
+      appBar: CustomAppBar(
+        title: 'Payment Options',
+        actions: [
+          Switch(
+            value: _isSimulatePayment,
+            onChanged: (value) {
+              setState(() {
+                _isSimulatePayment = value;
+              });
+            },
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           Padding(
@@ -226,30 +241,47 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                 if (_upiAddrError != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8),
-                    child: Text(_upiAddrError!,
-                        style: TextStyle(color: Colors.red)),
+                    child: Text(
+                      _upiAddrError!,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 Expanded(
                   child: ListView(
                     children: [
-                      Text('Preferred Payment',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(
+                        'Preferred Payment',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                       SizedBox(height: 12),
-                      _buildPaymentOption('Card Payment', PaymentMethod.Card,
-                          Icons.credit_card),
+                      _buildPaymentOption(
+                        'Card Payment',
+                        PaymentMethod.Card,
+                        Icons.credit_card,
+                      ),
                       Divider(),
-                      _buildPaymentOption('Google Pay', PaymentMethod.GooglePay,
-                          Icons.account_balance_wallet),
+                      _buildPaymentOption(
+                        'Google Pay',
+                        PaymentMethod.GooglePay,
+                        Icons.account_balance_wallet,
+                      ),
                       Divider(),
                       _buildUpiAppList(),
                     ],
                   ),
                 ),
-                CustomElevatedButton(
-                  title: 'Pay ₹$total',
-                  onPressed: kDebugMode ? _simulatePayment : _handlePay,
-                ),
+                _isSimulatePayment
+                    ? CustomElevatedButton(
+                      title: 'Pay ₹$total',
+                      onPressed: _simulatePayment,
+                    )
+                    : CustomElevatedButton(
+                      title: 'Pay ₹$total',
+                      onPressed: _handlePay,
+                    ),
               ],
             ),
           ),
@@ -260,7 +292,10 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   }
 
   Widget _buildPaymentOption(
-      String title, PaymentMethod method, IconData icon) {
+    String title,
+    PaymentMethod method,
+    IconData icon,
+  ) {
     return ListTile(
       leading: Icon(icon),
       title: Text(title),
