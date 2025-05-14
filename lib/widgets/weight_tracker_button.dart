@@ -4,7 +4,9 @@ import 'package:line_skip/providers/ble_provider.dart';
 import 'package:line_skip/providers/cart_provider.dart';
 
 GestureDetector weightTrackerButton(WidgetRef ref, BuildContext context) {
-  return GestureDetector(
+  return InkWell(
+    borderRadius: BorderRadius.circular(8.0),
+    splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
     onTap: () => _openWeightTracker(context, ref),
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -101,9 +103,10 @@ Future<void> showDeviceDialog(BuildContext context, WidgetRef ref) {
                   icon: Icons.monitor_weight,
                   label: "Actual Trolley Weight",
                   value: "$actualWeight g",
-                  bgColor: isWeightMatching
-                      ? Colors.green.shade50
-                      : Colors.red.shade50,
+                  bgColor:
+                      isWeightMatching
+                          ? Colors.green.shade50
+                          : Colors.red.shade50,
                 ),
                 if (!isWeightMatching) ...[
                   const SizedBox(height: 16),
@@ -116,8 +119,11 @@ Future<void> showDeviceDialog(BuildContext context, WidgetRef ref) {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        Icon(Icons.warning_amber_rounded,
-                            color: Colors.red, size: 24),
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          color: Colors.red,
+                          size: 24,
+                        ),
                         SizedBox(width: 10),
                         Expanded(
                           child: Text(

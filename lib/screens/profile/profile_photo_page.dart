@@ -34,16 +34,16 @@ class ProfilePhotoPage extends StatelessWidget {
               onSkip();
             },
           ),
-          CustomFloatingNextButton(
-            onPressed: () {},
-          ),
+          CustomFloatingNextButton(onPressed: () {}),
         ],
       ),
     );
   }
 
   Widget _buildPhotoBox(VoidCallback onTap) {
-    return GestureDetector(
+    return InkWell(
+      borderRadius: BorderRadius.circular(8.0),
+      splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
       onTap: onTap,
       child: Container(
         width: 120,

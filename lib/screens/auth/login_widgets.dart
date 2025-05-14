@@ -39,21 +39,25 @@ class _PhoneInputState extends State<PhoneInput> {
   void _openCountryPicker() {
     showDialog(
       context: context,
-      builder: (context) => CountryPickerDialog(
-        titlePadding: const EdgeInsets.all(0),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-        searchCursorColor: Colors.black,
-        searchInputDecoration: const InputDecoration(hintText: 'Search...'),
-        isSearchable: true,
-        onValuePicked: (Country country) {
-          setState(() => _selectedCountry = country);
-        },
-        priorityList: [
-          CountryPickerUtils.getCountryByIsoCode('IN'),
-          CountryPickerUtils.getCountryByIsoCode('US'),
-        ],
-        itemBuilder: _buildCountryItem,
-      ),
+      builder:
+          (context) => CountryPickerDialog(
+            titlePadding: const EdgeInsets.all(0),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 0,
+              vertical: 8,
+            ),
+            searchCursorColor: Colors.black,
+            searchInputDecoration: const InputDecoration(hintText: 'Search...'),
+            isSearchable: true,
+            onValuePicked: (Country country) {
+              setState(() => _selectedCountry = country);
+            },
+            priorityList: [
+              CountryPickerUtils.getCountryByIsoCode('IN'),
+              CountryPickerUtils.getCountryByIsoCode('US'),
+            ],
+            itemBuilder: _buildCountryItem,
+          ),
     );
   }
 
@@ -109,7 +113,9 @@ class _PhoneInputState extends State<PhoneInput> {
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
             hintText: 'Enter phone number',
-            prefixIcon: GestureDetector(
+            prefixIcon: InkWell(
+              borderRadius: BorderRadius.circular(8.0),
+              splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
               onTap: _openCountryPicker,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -131,7 +137,7 @@ class _PhoneInputState extends State<PhoneInput> {
           title: 'CONTINUE',
           onPressed: _sendOtp,
           isEnabled: _isButtonEnabled,
-        )
+        ),
       ],
     );
   }
@@ -191,15 +197,16 @@ class _OtpInputState extends State<OtpInput> {
 
   void _checkOtpValidity() {
     setState(() {
-      isOtpValid =
-          controllers.every((controller) => controller.text.isNotEmpty);
+      isOtpValid = controllers.every(
+        (controller) => controller.text.isNotEmpty,
+      );
     });
   }
 
   void _resendCode() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('OTP code resent!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('OTP code resent!')));
   }
 
   Widget _buildOtpTextField(int index) {
@@ -272,7 +279,9 @@ class _OtpInputState extends State<OtpInput> {
           children: [
             const Text('Didn\'t get the code?', style: TextStyle(fontSize: 16)),
             const SizedBox(width: 6),
-            GestureDetector(
+            InkWell(
+              borderRadius: BorderRadius.circular(8.0),
+              splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
               onTap: _resendCode,
               child: const Text(
                 'Resend Code',
@@ -288,10 +297,14 @@ class _OtpInputState extends State<OtpInput> {
         const SizedBox(height: 12),
         Row(
           children: [
-            const Text('Entered the wrong number?',
-                style: TextStyle(fontSize: 16)),
+            const Text(
+              'Entered the wrong number?',
+              style: TextStyle(fontSize: 16),
+            ),
             const SizedBox(width: 6),
-            GestureDetector(
+            InkWell(
+              borderRadius: BorderRadius.circular(8.0),
+              splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
               onTap: widget.onChangeNumber,
               child: const Text(
                 'Edit Number',
@@ -326,10 +339,11 @@ Widget customText(String str, double textSize) {
           height: 0.8,
           fontFamily: 'Gagalin',
           fontSize: textSize,
-          foreground: Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 5
-            ..color = const Color(0xFF494949),
+          foreground:
+              Paint()
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 5
+                ..color = const Color(0xFF494949),
         ),
       ),
       Text(
