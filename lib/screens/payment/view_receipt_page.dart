@@ -146,23 +146,23 @@ class ViewReceiptPage extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: FilledButton(
-          style: FilledButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            backgroundColor: Colors.deepOrangeAccent,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
-          onPressed: () {
-            // Handle invoice download
-          },
-          child: const Text("Download Invoice"),
-        ),
-      ),
+      // bottomNavigationBar: Padding(
+      //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      //   child: FilledButton(
+      //     style: FilledButton.styleFrom(
+      //       shape: RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.circular(8),
+      //       ),
+      //       backgroundColor: Colors.deepOrangeAccent,
+      //       foregroundColor: Colors.white,
+      //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      //     ),
+      //     onPressed: () {
+      //       // Handle invoice download
+      //     },
+      //     child: const Text("Download Invoice"),
+      //   ),
+      // ),
     );
   }
 
