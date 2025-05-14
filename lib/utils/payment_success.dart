@@ -22,9 +22,7 @@ Future<ReceiptModel> generateReceipt(
   final cartNotifier = ref.read(cartItemsProvider.notifier);
   final selectedStore = ref.watch(selectedStoreProvider);
   final cartItems = ref.watch(cartItemsProvider);
-
-  final String userId = ref.read(currentUserProvider)!.id;
-  final String userName = ref.read(currentUserProvider)!.name;
+  final user = ref.read(currentUserProvider)!;
 
   // if (selectedStore == null)
   // break
@@ -72,7 +70,7 @@ Future<ReceiptModel> generateReceipt(
   }
 
   final transactionDetail = TransactionModel(
-    userid: userId,
+    userid: user.id,
     transactionId: transactionId,
     amount: double.parse(
       cartNotifier.calculateInvoiceTotal().toStringAsFixed(2),
@@ -102,8 +100,8 @@ Future<ReceiptModel> generateReceipt(
   );
 
   final receipt = ReceiptModel(
-    user: userId,
-    userName: userName,
+    userId: user.id,
+    user: user,
 
     invoiceTotal: paymentDetails.invoiceTotal,
     transactionId: transactionDetail.transactionId,

@@ -32,18 +32,18 @@ Future<void> scanToAddItems(
   WidgetRef ref,
 ) async {
   // final barcode = '8901063035027';
-  // if (kDebugMode) {
-  //   Item item = Item(
-  //     barcode: '8901063035027',
-  //     name: 'Test Item',
-  //     price: 3.0,
-  //     weight: 5.0,
-  //     imageUrl: 'https://example.com/image.jpg',
-  //   );
+  if (kDebugMode) {
+    Item item = Item(
+      barcode: '8901063035027',
+      name: 'Test Item',
+      price: 3.0,
+      weight: 5.0,
+      imageUrl: 'https://example.com/image.jpg',
+    );
 
-  //   ref.read(cartItemsProvider.notifier).addItem(item);
-  //   return;
-  // }
+    ref.read(cartItemsProvider.notifier).addItem(item);
+    return;
+  }
 
   final barcode = await scanBarcode(context);
 

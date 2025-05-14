@@ -2,13 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:line_skip/data/models/item_model.dart';
 import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/data/models/transaction_model.dart';
+import 'package:line_skip/data/models/user_model.dart';
 
 import 'payment_details_model.dart';
 
 class ReceiptModel {
   final String receiptId;
-  final String user;
-  final String userName;
+  final String userId;
+  final UserModel user;
   final List<Item> items;
   final Store store;
   final double invoiceTotal;
@@ -19,8 +20,8 @@ class ReceiptModel {
 
   ReceiptModel({
     String? receiptId,
+    required this.userId,
     required this.user,
-    required this.userName,
     required this.items,
     required this.store,
     required this.invoiceTotal,
@@ -35,8 +36,8 @@ class ReceiptModel {
 
   Map<String, dynamic> toJson() => {
     'receiptId': receiptId,
-    'user': user,
-    'userName': userName,
+    'userId': userId,
+    'user': user.toJson(),
     'items': items.map((i) => i.toJson()).toList(),
     'store': store.toJson(),
     'invoiceTotal': invoiceTotal,
@@ -55,8 +56,8 @@ class ReceiptModel {
 
     return ReceiptModel(
       receiptId: json['receiptId'],
-      user: json['user'],
-      userName: json['userName'],
+      userId: json['userId'],
+      user: UserModel.fromJson(json['user']),
       items: (json['items'] as List).map((e) => Item.fromJson(e)).toList(),
       store: Store.fromJson(json['store']),
       invoiceTotal: (json['invoiceTotal'] as num).toDouble(),

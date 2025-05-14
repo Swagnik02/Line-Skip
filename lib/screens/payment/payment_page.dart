@@ -159,21 +159,6 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     );
   }
 
-  Future<void> _processSuccess() async {
-    final paymentApp =
-        _selectedUpiAppIndex != null
-            ? _apps![_selectedUpiAppIndex!].upiApplication.getAppName()
-            : 'UPI';
-    final receipt = await generateReceipt(
-      context,
-      ref,
-      transaction.rawResponse!,
-      paymentApp,
-    );
-    await ref.read(receiptProvider.notifier).saveReceipt(receipt);
-    navigateNextAndClean(context, ref, receipt);
-  }
-
   Widget _buildUpiAppList() {
     if (_apps == null || _apps!.isEmpty) return SizedBox.shrink();
 
@@ -305,5 +290,20 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         onChanged: (value) => _setPaymentMethod(value),
       ),
     );
+  }
+
+  Future<void> _processSuccess() async {
+    final paymentApp =
+        _selectedUpiAppIndex != null
+            ? _apps![_selectedUpiAppIndex!].upiApplication.getAppName()
+            : 'UPI';
+    final receipt = await generateReceipt(
+      context,
+      ref,
+      transaction.rawResponse!,
+      paymentApp,
+    );
+    await ref.read(receiptProvider.notifier).saveReceipt(receipt);
+    navigateNextAndClean(context, ref, receipt);
   }
 }

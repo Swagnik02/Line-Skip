@@ -44,7 +44,13 @@ class ViewReceiptPage extends StatelessWidget {
                           style: TextStyle(fontSize: 16),
                         ),
                         const SizedBox(height: 8),
-                        Text(receipt.userName, style: boldStyle),
+                        Row(
+                          children: [
+                            Text(receipt.user.name, style: boldStyle),
+                            Spacer(),
+                            _iconRow(Icons.phone, receipt.user.phoneNumber),
+                          ],
+                        ),
                       ],
                     ),
                   ),

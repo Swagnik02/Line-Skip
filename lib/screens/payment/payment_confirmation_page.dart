@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:line_skip/data/models/receipt_model.dart';
+import 'package:line_skip/screens/payment/view_receipt_page.dart';
 import 'package:line_skip/utils/helpers.dart';
 import 'package:line_skip/widgets/confirmation_widgets.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 
 class PaymentConfirmationPage extends StatefulWidget {
   final ReceiptModel receipt;
-  const PaymentConfirmationPage({
-    super.key,
-    required this.receipt,
-  });
+  const PaymentConfirmationPage({super.key, required this.receipt});
 
   @override
   State<PaymentConfirmationPage> createState() =>
@@ -54,16 +52,20 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
       begin: const Offset(0, 0.3),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _cardController, curve: Curves.easeOut));
-    _cardFadeAnimation =
-        Tween<double>(begin: 0, end: 1).animate(_cardController);
+    _cardFadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(_cardController);
 
     // Button animation
     _buttonController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _buttonFadeAnimation =
-        Tween<double>(begin: 0, end: 1).animate(_buttonController);
+    _buttonFadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(_buttonController);
 
     _startAnimations();
   }
@@ -134,10 +136,7 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
               ),
 
               // Animated Buttons
-              FadeTransition(
-                opacity: _buttonFadeAnimation,
-                child: _footer(),
-              ),
+              FadeTransition(opacity: _buttonFadeAnimation, child: _footer()),
             ],
           ),
         ),
@@ -150,7 +149,14 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
       children: [
         buildButton(
           label: "Show Receipt",
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ViewReceiptPage(receipt: widget.receipt),
+              ),
+            );
+          },
           backgroundColor: Colors.white,
           textColor: Colors.black54,
           outlined: true,
@@ -184,19 +190,12 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
             ),
           ],
         ),
-        child: const Icon(
-          Icons.check_rounded,
-          size: 60,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.check_rounded, size: 60, color: Colors.white),
       ),
     );
   }
 
-  Container _paymentDetailsCard(
-    double spacingFromTop,
-    double circleRadius,
-  ) {
+  Container _paymentDetailsCard(double spacingFromTop, double circleRadius) {
     final receipt = widget.receipt;
     final formattedDate = formatReceiptDate(receipt.createdAt);
 
@@ -247,7 +246,9 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
           buildRow('Net Amount', receipt.paymentDetails.netAmount.toString()),
           buildRow('Tax', receipt.paymentDetails.taxAmount.toString()),
           buildRow(
-              'Invoice Total', receipt.paymentDetails.invoiceTotal.toString()),
+            'Invoice Total',
+            receipt.paymentDetails.invoiceTotal.toString(),
+          ),
         ],
       ),
     );

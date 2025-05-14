@@ -110,37 +110,3 @@ class Item {
     );
   }
 }
-
-void addItemsToFirestore(String selectedStore) async {
-  // Firestore reference to the 'stores' collection and the specific store document
-  final storeRef =
-      FirebaseFirestore.instance.collection('stores').doc(selectedStore);
-
-  // Firestore reference to the 'items' subcollection inside the store document
-  final itemsCollectionRef = storeRef.collection('items');
-
-  // Create an Item object with the data you want to add
-  final item = Item(
-    barcode: '8901063035027',
-    name: 'Milk Bikis',
-    brandName: 'Britannia',
-    price: 30,
-    weight: 0.5,
-    imageUrl:
-        'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1247.jpg',
-    category: 'Snacks',
-    description: 'Delicious milk-based biscuits.',
-  );
-
-  try {
-    // Add the item to the 'items' subcollection of the selected store
-    final docRef = itemsCollectionRef
-        .doc(); // Create a new document reference for the item
-
-    // Save the item to Firestore
-    await docRef.set(item.toMap());
-    print('Added: ${item.name} to Store with docId: $selectedStore');
-  } catch (e) {
-    print('Failed to add ${item.name}: $e');
-  }
-}

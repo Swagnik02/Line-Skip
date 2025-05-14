@@ -7,17 +7,18 @@ class ReceiptRepository {
   final FirebaseFirestore _firestore;
 
   ReceiptRepository({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   /// Fetch all receipts for a given userId
   Future<List<ReceiptModel>> fetchReceipts(String userId) async {
     try {
-      final snapshot = await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('receipts')
-          .orderBy('createdAt', descending: true)
-          .get();
+      final snapshot =
+          await _firestore
+              .collection('users')
+              .doc(userId)
+              .collection('receipts')
+              .orderBy('createdAt', descending: true)
+              .get();
 
       return snapshot.docs.map((doc) {
         final data = doc.data();
@@ -31,14 +32,17 @@ class ReceiptRepository {
 
   /// Fetch a single receipt by ID
   Future<ReceiptModel?> fetchReceiptById(
-      String userId, String receiptId) async {
+    String userId,
+    String receiptId,
+  ) async {
     try {
-      final doc = await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('receipts')
-          .doc(receiptId)
-          .get();
+      final doc =
+          await _firestore
+              .collection('users')
+              .doc(userId)
+              .collection('receipts')
+              .doc(receiptId)
+              .get();
 
       if (doc.exists) {
         return ReceiptModel.fromJson(doc.data()!);
@@ -56,7 +60,7 @@ class ReceiptRepository {
     try {
       await _firestore
           .collection('users')
-          .doc(receipt.user)
+          .doc(receipt.userId)
           .collection('receipts')
           .doc(receipt.receiptId)
           .set(receipt.toJson());

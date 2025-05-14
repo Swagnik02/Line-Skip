@@ -10,8 +10,10 @@ final receiptRepositoryProvider = Provider<ReceiptRepository>((ref) {
 });
 
 /// Receipts fetch provider
-final receiptsProvider =
-    FutureProvider.family<List<ReceiptModel>, String>((ref, userId) async {
+final receiptsProvider = FutureProvider.family<List<ReceiptModel>, String>((
+  ref,
+  userId,
+) async {
   final repo = ref.read(receiptRepositoryProvider);
   return repo.fetchReceipts(userId);
 });
@@ -30,7 +32,7 @@ class ReceiptNotifier extends StateNotifier<AsyncValue<void>> {
       state = const AsyncData(null);
 
       // Invalidate the receiptsProvider for this user
-      ref.invalidate(receiptsProvider(receipt.user));
+      ref.invalidate(receiptsProvider(receipt.userId));
 
       dev.log('Receipt saved successfully', name: 'Receipt');
     } catch (error, stack) {
@@ -43,6 +45,6 @@ class ReceiptNotifier extends StateNotifier<AsyncValue<void>> {
 /// Provider for saving receipts
 final receiptProvider =
     StateNotifierProvider<ReceiptNotifier, AsyncValue<void>>((ref) {
-  final repository = ref.read(receiptRepositoryProvider);
-  return ReceiptNotifier(ref, repository);
-});
+      final repository = ref.read(receiptRepositoryProvider);
+      return ReceiptNotifier(ref, repository);
+    });
