@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/ble_provider.dart';
 import 'package:line_skip/providers/cart_provider.dart';
 
-GestureDetector weightTrackerButton(WidgetRef ref, BuildContext context) {
+InkWell weightTrackerButton(WidgetRef ref, BuildContext context) {
   return InkWell(
     borderRadius: BorderRadius.circular(8.0),
     splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
