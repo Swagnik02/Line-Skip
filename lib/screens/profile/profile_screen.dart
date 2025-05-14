@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/current_user_provider.dart';
-import 'package:line_skip/screens/profile/profile_input_page.dart';
+import 'package:line_skip/screens/profile/edit_profile_page.dart';
+import 'package:line_skip/utils/constants.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -20,20 +21,17 @@ class ProfileScreen extends ConsumerWidget {
               : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Profile Image
                     CircleAvatar(
                       radius: 50,
                       backgroundColor: Colors.deepOrangeAccent.shade100,
                       backgroundImage:
-                          (user.profileImage != null &&
-                                  user.profileImage!.isNotEmpty)
+                          (user.profileImage?.isNotEmpty ?? false)
                               ? NetworkImage(user.profileImage!)
                               : null,
+
                       child:
-                          (user.profileImage == null ||
-                                  user.profileImage!.isEmpty)
+                          (user.profileImage?.isEmpty ?? true)
                               ? const Icon(
                                 Icons.person,
                                 size: 50,
@@ -42,8 +40,6 @@ class ProfileScreen extends ConsumerWidget {
                               : null,
                     ),
                     const SizedBox(height: 16),
-
-                    // User Name
                     Text(
                       user.name.isNotEmpty ? user.name : "No Name Provided",
                       style: const TextStyle(
@@ -52,8 +48,6 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-
-                    // User Email
                     Text(
                       user.email.isNotEmpty ? user.email : "No Email Provided",
                       style: const TextStyle(
@@ -62,34 +56,32 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      user.phoneNumber,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
+                    if (user.phoneNumber.isNotEmpty)
+                      Text(
+                        user.phoneNumber,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 20),
-
-                    // Action Buttons
-                    _profileOption(Icons.edit, "Edit Profile", () {
+                    _profileOption(context, Icons.edit, "Edit Profile", () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return ProfileInputPage();
-                          },
-                        ),
+                        MaterialPageRoute(builder: (_) => EditProfilePage()),
                       );
                     }),
-                    _profileOption(Icons.lock, "Change Password", () {
-                      // TODO: Implement password change
+                    _profileOption(context, Icons.lock, "Change Password", () {
+                      // TODO: Implement
                     }),
-                    _profileOption(Icons.logout, "Logout", () {
-                      final user = FirebaseAuth.instance.currentUser;
-                      if (user != null) {
-                        FirebaseAuth.instance.signOut();
-                      }
+                    _profileOption(context, Icons.logout, "Logout", () async {
+                      await FirebaseAuth.instance.signOut();
+                      ref.read(currentUserProvider.notifier).clearUser();
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        authRoute,
+                        (route) => false,
+                      );
                     }),
                   ],
                 ),
@@ -97,7 +89,12 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _profileOption(IconData icon, String title, VoidCallback onTap) {
+  Widget _profileOption(
+    BuildContext context,
+    IconData icon,
+    String title,
+    VoidCallback onTap,
+  ) {
     return ListTile(
       leading: Icon(icon, color: Colors.deepOrange),
       title: Text(title, style: const TextStyle(fontSize: 18)),

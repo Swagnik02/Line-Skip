@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
+  final TextEditingController textController;
+  final String hintText;
   const CustomTextField({
     super.key,
-    required TextEditingController nameController,
-  }) : _nameController = nameController;
-
-  final TextEditingController _nameController;
-
+    required this.textController,
+    required this.hintText,
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,11 +23,14 @@ class CustomTextField extends StatelessWidget {
         ],
       ),
       child: TextField(
-        controller: _nameController,
+        controller: textController,
         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
+          hintText: hintText,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 14.0,
+            horizontal: 16.0,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
