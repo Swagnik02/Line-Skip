@@ -7,16 +7,20 @@ import 'package:line_skip/widgets/weight_tracker_button.dart';
 
 AppBar buildAppBar(WidgetRef ref, Store? selectedStore, BuildContext context) {
   return AppBar(
-    backgroundColor: ref.watch(currentPageProvider) == 1
-        ? Colors.deepOrangeAccent
-        : Colors.white,
+    backgroundColor:
+        ref.watch(currentPageProvider) == 1
+            ? Colors.deepOrangeAccent
+            : Colors.white,
     elevation: 0,
     automaticallyImplyLeading: false,
     title: Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+
         children: [
-          CartItemCount(),
+          const CloseButton(),
           const Spacer(),
           if (selectedStore != null)
             SizedBox(
@@ -25,14 +29,18 @@ AppBar buildAppBar(WidgetRef ref, Store? selectedStore, BuildContext context) {
                 selectedStore.name,
                 overflow: TextOverflow.fade,
                 maxLines: 2,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
               ),
             ),
           const Spacer(),
           selectedStore!.hasTrolleyPairing
               ? weightTrackerButton(ref, context)
               : Container(),
+          const SizedBox(width: 10),
+          CartItemCount(),
         ],
       ),
     ),
