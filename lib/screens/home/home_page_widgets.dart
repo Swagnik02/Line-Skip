@@ -131,15 +131,15 @@ class QuickOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(8.0),
-      splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
-      onTap: () {
-        Navigator.pushNamed(context, route);
-      },
-      child: Column(
-        children: [
-          Container(
+    return Column(
+      children: [
+        InkWell(
+          borderRadius: BorderRadius.circular(35),
+          splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+          onTap: () {
+            Navigator.pushNamed(context, route);
+          },
+          child: Container(
             width: 80,
             height: 80,
             decoration: BoxDecoration(
@@ -149,39 +149,41 @@ class QuickOption extends StatelessWidget {
             alignment: Alignment.center,
             child: Icon(icon, size: 35, color: Colors.deepOrangeAccent),
           ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        ),
+      ],
     );
   }
 }
 
-class DestinationCard extends StatelessWidget {
+class StoreCard extends StatelessWidget {
   final Store store;
 
-  const DestinationCard({super.key, required this.store});
+  const StoreCard({super.key, required this.store});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(8.0),
-      splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StoreDetailPage(store: store),
-          ),
-        );
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.7,
-        margin: const EdgeInsets.only(right: 16),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+    final cardWidth = MediaQuery.of(context).size.width * 0.7;
+    return Container(
+      width: cardWidth,
+      height: cardWidth * 1.777,
+      margin: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => StoreDetailPage(store: store),
+            ),
+          );
+        },
         child: Stack(
           children: [
             ClipRRect(
@@ -191,17 +193,15 @@ class DestinationCard extends StatelessWidget {
               ),
               child: Image.network(
                 store.storeImage,
-                width: MediaQuery.of(context).size.width * 0.7,
+                width: cardWidth,
+                height: cardWidth * 1.777,
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Shimmer.fromColors(
                     baseColor: Colors.deepOrange.shade100,
                     highlightColor: Colors.grey.shade100,
-                    child: Container(
-                      width: 70 * MediaQuery.of(context).size.width / 100,
-                      color: Colors.white,
-                    ),
+                    child: Container(width: cardWidth, color: Colors.white),
                   );
                 },
                 errorBuilder: (_, __, ___) => const Icon(Icons.error),
@@ -345,8 +345,7 @@ class AvailableStores extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             itemCount: stores.length,
-            itemBuilder:
-                (context, index) => DestinationCard(store: stores[index]),
+            itemBuilder: (context, index) => StoreCard(store: stores[index]),
           ),
     );
   }
