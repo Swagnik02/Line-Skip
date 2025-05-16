@@ -53,106 +53,110 @@ Future<void> showDeviceDialog(BuildContext context, WidgetRef ref) {
           final actualWeight = bleState.receivedData;
           final isWeightMatching = cartNotifier.validateWeight(actualWeight);
 
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
-            contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-            actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: const [
-                    Icon(Icons.scale, color: Colors.deepOrange),
-                    SizedBox(width: 10),
-                    Text(
-                      "Trolley Weight Info",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 18,
+          return PopScope(
+            canPop: isWeightMatching,
+            child: AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+              contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+              actionsPadding: const EdgeInsets.symmetric(horizontal: 8),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(Icons.scale, color: Colors.deepOrange),
+                      SizedBox(width: 10),
+                      Text(
+                        "Trolley Weight Info",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  bleState.connectedDevice?.name ?? "Unknown Device",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey,
+                    ],
                   ),
-                ),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Divider(thickness: 1),
-                _infoCard(
-                  icon: Icons.speed,
-                  label: "Expected Weight",
-                  value: "$expectedWeight g",
-                  bgColor: Colors.orange.shade50,
-                ),
-                const SizedBox(height: 12),
-                _infoCard(
-                  icon: Icons.monitor_weight,
-                  label: "Actual Trolley Weight",
-                  value: "$actualWeight g",
-                  bgColor:
-                      isWeightMatching
-                          ? Colors.green.shade50
-                          : Colors.red.shade50,
-                ),
-                if (!isWeightMatching) ...[
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Icon(
-                          Icons.warning_amber_rounded,
-                          color: Colors.red,
-                          size: 24,
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            "Mismatch detected! The actual trolley weight doesn't match the expected weight of scanned items.",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 6),
+                  Text(
+                    bleState.connectedDevice?.name ?? "Unknown Device",
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
                     ),
                   ),
                 ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Divider(thickness: 1),
+                  _infoCard(
+                    icon: Icons.speed,
+                    label: "Expected Weight",
+                    value: "$expectedWeight g",
+                    bgColor: Colors.orange.shade50,
+                  ),
+                  const SizedBox(height: 12),
+                  _infoCard(
+                    icon: Icons.monitor_weight,
+                    label: "Actual Trolley Weight",
+                    value: "$actualWeight g",
+                    bgColor:
+                        isWeightMatching
+                            ? Colors.green.shade50
+                            : Colors.red.shade50,
+                  ),
+                  if (!isWeightMatching) ...[
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: Colors.red,
+                            size: 24,
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              "Mismatch detected! The actual trolley weight doesn't match the expected weight of scanned items. \n Kindly put exact items in the trolley in order to continue shopping !!.",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              actions: [
+                if (isWeightMatching)
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      "CLOSE",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepOrange,
+                      ),
+                    ),
+                  ),
               ],
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  "CLOSE",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepOrange,
-                  ),
-                ),
-              ),
-            ],
           );
         },
       );

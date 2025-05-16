@@ -36,15 +36,13 @@ class _StorePageState extends ConsumerState<StorePage> {
   @override
   Widget build(BuildContext context) {
     final selectedStore = ref.watch(selectedStoreProvider);
-    final inventory =
-        ref.watch(inventoryProvider(selectedStore?.storeId ?? ''));
+    final inventory = ref.watch(
+      inventoryProvider(selectedStore?.storeId ?? ''),
+    );
     final currentIndex = ref.watch(currentPageProvider);
     final cartNotifier = ref.read(cartItemsProvider.notifier);
 
-    final screens = const [
-      CartPage(),
-      CheckoutPage(),
-    ];
+    final screens = const [CartPage(), CheckoutPage()];
 
     ref.listen<BLEState>(bleProvider, (prev, next) {
       final actualWeight = next.receivedData;
@@ -53,6 +51,10 @@ class _StorePageState extends ConsumerState<StorePage> {
       if (!isWeightBalanced && !_dialogShown) {
         _dialogShown = true;
         showDeviceDialog(context, ref).then((_) => _dialogShown = false);
+      }
+
+      if (isWeightBalanced) {
+        _dialogShown = false;
       }
     });
 
@@ -80,8 +82,8 @@ class _StorePageState extends ConsumerState<StorePage> {
         body: screens[currentIndex],
         bottomNavigationBar: CustomBottomNavBar(
           currentIndex: currentIndex,
-          onTap: (index) =>
-              ref.read(currentPageProvider.notifier).state = index,
+          onTap:
+              (index) => ref.read(currentPageProvider.notifier).state = index,
           bottomNavItems: [
             CustomStyle16NavBarItem(title: 'Cart', icon: Icons.shopping_cart),
             CustomStyle16NavBarItem(title: 'Payment', icon: Icons.payment),
