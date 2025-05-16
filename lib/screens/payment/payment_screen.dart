@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/providers/receipt_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
-import 'package:line_skip/screens/payment/verification_laoder.dart';
+import 'package:line_skip/widgets/verification_laoder.dart';
 import 'package:line_skip/utils/payment_helpers.dart';
 import 'package:line_skip/utils/payment_success.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
