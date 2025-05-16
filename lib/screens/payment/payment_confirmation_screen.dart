@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:line_skip/data/models/receipt_model.dart';
-import 'package:line_skip/screens/payment/view_receipt_page.dart';
+import 'package:line_skip/screens/payment/shopping_summary_screen.dart.dart';
 import 'package:line_skip/utils/helpers.dart';
-import 'package:line_skip/widgets/confirmation_widgets.dart';
+import 'package:line_skip/widgets/payment_confirmation_widgets.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 
-class PaymentConfirmationPage extends StatefulWidget {
+class PaymentConfirmationScreen extends StatefulWidget {
   final ReceiptModel receipt;
-  const PaymentConfirmationPage({super.key, required this.receipt});
+  const PaymentConfirmationScreen({super.key, required this.receipt});
 
   @override
-  State<PaymentConfirmationPage> createState() =>
-      _PaymentConfirmationPageState();
+  State<PaymentConfirmationScreen> createState() =>
+      _PaymentConfirmationScreenState();
 }
 
-class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
+class _PaymentConfirmationScreenState extends State<PaymentConfirmationScreen>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late AnimationController _cardController;
@@ -148,12 +148,13 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
     return Column(
       children: [
         buildButton(
-          label: "Show Receipt",
+          label: "Billing Overview",
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ViewReceiptPage(receipt: widget.receipt),
+                builder:
+                    (context) => ShoppingSummaryScreen(receipt: widget.receipt),
               ),
             );
           },
@@ -163,7 +164,7 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage>
         ),
         const SizedBox(height: 12),
         buildButton(
-          label: "Back to HomePage",
+          label: "Back to HomeScreen",
           onPressed: () => Navigator.pop(context),
           backgroundColor: Colors.deepOrangeAccent,
           textColor: Colors.white,

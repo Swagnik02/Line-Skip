@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/current_user_provider.dart';
-import 'package:line_skip/screens/profile/edit_profile_page.dart';
+import 'package:line_skip/screens/profile/edit_profile_screen.dart';
 import 'package:line_skip/utils/constants.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 
@@ -68,7 +68,7 @@ class ProfileScreen extends ConsumerWidget {
                     _profileOption(context, Icons.edit, "Edit Profile", () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => EditProfilePage()),
+                        MaterialPageRoute(builder: (_) => EditProfileScreen()),
                       );
                     }),
                     _profileOption(context, Icons.lock, "Change Password", () {

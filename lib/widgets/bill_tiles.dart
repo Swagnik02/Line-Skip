@@ -1,45 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/receipt_model.dart';
-import 'package:line_skip/providers/current_user_provider.dart';
-import 'package:line_skip/providers/receipt_provider.dart';
-import 'package:line_skip/screens/payment/view_receipt_page.dart';
+import 'package:line_skip/screens/payment/shopping_summary_screen.dart.dart';
 import 'package:line_skip/utils/helpers.dart';
-import 'package:line_skip/widgets/custom_app_bar.dart';
 import 'package:line_skip/widgets/custom_ink_well.dart';
 
-class ReceiptPage extends ConsumerWidget {
-  const ReceiptPage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final String userId = ref.read(currentUserProvider)!.id;
-    final receiptAsync = ref.watch(receiptsProvider(userId));
-
-    return Scaffold(
-      appBar: CustomAppBar(title: 'My Receipts'),
-      body: receiptAsync.when(
-        data: (receipts) {
-          if (receipts.isEmpty) {
-            return const Center(child: Text('No receipts found.'));
-          }
-          return ListView.builder(
-            itemCount: receipts.length,
-            itemBuilder: (context, index) {
-              final receipt = receipts[index];
-              return ReceiptTile(receipt: receipt);
-            },
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Error: $e')),
-      ),
-    );
-  }
-}
-
-class ReceiptTile extends StatelessWidget {
-  const ReceiptTile({super.key, required this.receipt});
+class BillTiles extends StatelessWidget {
+  const BillTiles({super.key, required this.receipt});
 
   final ReceiptModel receipt;
 
@@ -49,7 +15,7 @@ class ReceiptTile extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ViewReceiptPage(receipt: receipt),
+          builder: (context) => ShoppingSummaryScreen(receipt: receipt),
         ),
       );
     }

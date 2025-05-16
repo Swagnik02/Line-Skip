@@ -8,14 +8,14 @@ import 'package:line_skip/utils/constants.dart';
 import 'package:line_skip/utils/photo_picker.dart';
 import 'package:line_skip/widgets/custom_floating_buttons.dart';
 
-class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({super.key});
 
   @override
-  State<EditProfilePage> createState() => EditProfilePageState();
+  State<EditProfileScreen> createState() => EditProfileScreenState();
 }
 
-class EditProfilePageState extends State<EditProfilePage> {
+class EditProfileScreenState extends State<EditProfileScreen> {
   final PageController _pageController = PageController();
 
   final TextEditingController _userNameController = TextEditingController();

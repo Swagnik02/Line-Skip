@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:line_skip/providers/cart_provider.dart';
-import 'package:line_skip/screens/payment/payment_page.dart';
+import 'package:line_skip/screens/payment/payment_screen.dart';
 
 class CheckoutPage extends ConsumerWidget {
   const CheckoutPage({super.key});
@@ -30,9 +30,9 @@ class CheckoutPage extends ConsumerWidget {
               Text(
                 "Checkout",
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(height: 20.0),
 
@@ -45,26 +45,30 @@ class CheckoutPage extends ConsumerWidget {
                     // Displaying the cart items
                     for (var item in cartItems)
                       _OrderItem(
-                          itemName: item.name, itemPrice: "₹ ${item.price}"),
+                        itemName: item.name,
+                        itemPrice: "₹ ${item.price}",
+                      ),
                     const Divider(color: Colors.white70),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "Total",
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           "₹ ${cartNotifier.calculateNetAmount()}",
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -81,9 +85,7 @@ class CheckoutPage extends ConsumerWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => PaymentPage(),
-                      ),
+                      MaterialPageRoute(builder: (context) => PaymentScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -101,9 +103,9 @@ class CheckoutPage extends ConsumerWidget {
                   child: Text(
                     "Proceed to Checkout",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.deepOrangeAccent,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      color: Colors.deepOrangeAccent,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -115,13 +117,14 @@ class CheckoutPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildCard(BuildContext context,
-      {required String title, required Widget child}) {
+  Widget _buildCard(
+    BuildContext context, {
+    required String title,
+    required Widget child,
+  }) {
     return Card(
       color: Colors.white.withOpacity(0.15),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       elevation: 5,
       shadowColor: Colors.black.withOpacity(0.2),
       child: Padding(
@@ -132,9 +135,9 @@ class CheckoutPage extends ConsumerWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white70,
-                    fontWeight: FontWeight.bold,
-                  ),
+                color: Colors.white70,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 10.0),
             child,
@@ -149,10 +152,7 @@ class _OrderItem extends StatelessWidget {
   final String itemName;
   final String itemPrice;
 
-  const _OrderItem({
-    required this.itemName,
-    required this.itemPrice,
-  });
+  const _OrderItem({required this.itemName, required this.itemPrice});
 
   @override
   Widget build(BuildContext context) {
@@ -163,15 +163,15 @@ class _OrderItem extends StatelessWidget {
         children: [
           Text(
             itemName,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.white),
           ),
           Text(
             itemPrice,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.white),
           ),
         ],
       ),

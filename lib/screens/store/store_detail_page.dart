@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/data/models/store_model.dart';
 import 'package:line_skip/providers/store_provider.dart';
-import 'package:line_skip/screens/store/store_page.dart';
+import 'package:line_skip/screens/store/store_screen.dart';
 import 'package:line_skip/screens/store/trolley_pairing_screen.dart';
 import 'package:line_skip/utils/constants.dart';
 
@@ -167,7 +167,7 @@ class StoreDetailPage extends ConsumerWidget {
           } else {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => StorePage()),
+              MaterialPageRoute(builder: (context) => StoreScreen()),
               ModalRoute.withName(authRoute),
             );
           }

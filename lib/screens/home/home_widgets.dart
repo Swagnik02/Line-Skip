@@ -285,12 +285,16 @@ class QuickOptions extends StatelessWidget {
   static const options = [
     {
       "icon": Icons.leaderboard_sharp,
-      "title": "Best Place",
-      "route": receiptRoute,
+      "title": "Best Places",
+      "route": bestPlacesRoute,
     },
-    {"icon": Icons.star_rounded, "title": "Favourites", "route": receiptRoute},
-    {"icon": Icons.receipt_long, "title": "Receipts", "route": receiptRoute},
-    {"icon": Icons.local_offer, "title": "Promos", "route": receiptRoute},
+    {
+      "icon": Icons.star_rounded,
+      "title": "Favourites",
+      "route": favouritesRoute,
+    },
+    {"icon": Icons.receipt_long, "title": "Bills", "route": allBillsRoute},
+    {"icon": Icons.local_offer, "title": "Promos", "route": promosRoute},
   ];
 
   @override

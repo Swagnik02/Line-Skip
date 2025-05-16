@@ -4,15 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_skip/firebase_options.dart';
-import 'package:line_skip/screens/payment/receipts_page.dart';
-import 'package:line_skip/screens/profile/profile_screen.dart';
-import 'package:line_skip/screens/store/trolley_pairing_screen.dart';
-import 'package:line_skip/utils/auth_screen.dart';
-import 'package:line_skip/screens/auth/login_screen.dart';
-import 'package:line_skip/screens/store/cart_screen.dart';
-import 'package:line_skip/screens/home/home_screen.dart';
-import 'package:line_skip/screens/splash/splash_screen.dart';
-import 'package:line_skip/screens/store/store_selection_screen.dart';
+
 import 'package:line_skip/utils/constants.dart';
 
 void main() async {
@@ -41,17 +33,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       initialRoute: splashRoute,
-      routes: {
-        authRoute: (context) => const AuthPage(),
-        splashRoute: (context) => const SplashPage(),
-        loginRoute: (context) => LoginPage(),
-        homeRoute: (context) => const HomePage(),
-        profileRoute: (context) => const ProfileScreen(),
-        storeSelectionRoute: (context) => const StoreSelectionPage(),
-        cartRoute: (context) => CartPage(),
-        trolleyPairingRoute: (context) => const TrolleyPairingPage(),
-        receiptRoute: (context) => const ReceiptPage(),
-      },
+      routes: routes,
     );
   }
 }

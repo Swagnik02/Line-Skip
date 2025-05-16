@@ -4,10 +4,10 @@ import 'package:line_skip/data/models/item_model.dart';
 import 'package:line_skip/data/models/receipt_model.dart';
 import 'package:line_skip/widgets/line_skip_text.dart';
 
-class ViewReceiptPage extends StatelessWidget {
+class ShoppingSummaryScreen extends StatelessWidget {
   final ReceiptModel receipt;
 
-  const ViewReceiptPage({super.key, required this.receipt});
+  const ShoppingSummaryScreen({super.key, required this.receipt});
 
   @override
   Widget build(BuildContext context) {

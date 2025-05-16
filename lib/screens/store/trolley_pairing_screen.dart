@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/ble_provider.dart';
-import 'package:line_skip/screens/store/store_page.dart';
+import 'package:line_skip/screens/store/store_screen.dart';
 import 'package:line_skip/widgets/confirmation_dialog.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
 
@@ -69,21 +69,19 @@ class _TrolleyPairingPageState extends ConsumerState<TrolleyPairingPage> {
       await ref.read(bleProvider.notifier).connectToDevice(device);
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const StorePage()),
+        MaterialPageRoute(builder: (context) => const StoreScreen()),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Connection failed')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Connection failed')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: "Trolley Pairing",
-      ),
+      appBar: CustomAppBar(title: "Trolley Pairing"),
       body: StreamBuilder<List<ScanResult>>(
         stream: FlutterBluePlus.scanResults,
         builder: (context, snapshot) {
@@ -94,8 +92,10 @@ class _TrolleyPairingPageState extends ConsumerState<TrolleyPairingPage> {
           final devices = snapshot.data!;
           if (devices.isEmpty) {
             return Center(
-              child: Text("No BLE devices found",
-                  style: TextStyle(fontSize: 18, color: Colors.grey)),
+              child: Text(
+                "No BLE devices found",
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
             );
           }
 
@@ -104,61 +104,67 @@ class _TrolleyPairingPageState extends ConsumerState<TrolleyPairingPage> {
 
           return ListView(
             padding: const EdgeInsets.all(16),
-            children: devices.map<Widget>((result) {
-              final device = result.device;
-              final name = device.platformName.isNotEmpty
-                  ? device.platformName
-                  : result.advertisementData.localName.isNotEmpty
-                      ? result.advertisementData.localName
-                      : "Unknown Device";
-              final rssi = result.rssi;
+            children:
+                devices.map<Widget>((result) {
+                  final device = result.device;
+                  final name =
+                      device.platformName.isNotEmpty
+                          ? device.platformName
+                          : result.advertisementData.localName.isNotEmpty
+                          ? result.advertisementData.localName
+                          : "Unknown Device";
+                  final rssi = result.rssi;
 
-              return ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                leading: Icon(
-                  Icons.bluetooth,
-                  color: Colors.deepOrangeAccent,
-                  size: 28,
-                ),
-                title: Text(
-                  name,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                ),
-                subtitle: Text(
-                  device.remoteId.str,
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                trailing: Text(
-                  "$rssi dBm",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: rssi > -60
-                        ? Colors.green
-                        : Colors.red, // Color based on RSSI value
-                  ),
-                ),
-                onTap: () async => await _connectToDevice(device),
-              );
-            }).toList(),
+                  return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    leading: Icon(
+                      Icons.bluetooth,
+                      color: Colors.deepOrangeAccent,
+                      size: 28,
+                    ),
+                    title: Text(
+                      name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
+                    subtitle: Text(
+                      device.remoteId.str,
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                    trailing: Text(
+                      "$rssi dBm",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color:
+                            rssi > -60
+                                ? Colors.green
+                                : Colors.red, // Color based on RSSI value
+                      ),
+                    ),
+                    onTap: () async => await _connectToDevice(device),
+                  );
+                }).toList(),
           );
         },
       ),
       floatingActionButton: AnimatedSwitcher(
         duration: Duration(milliseconds: 300),
-        child: isScanning
-            ? CircularProgressIndicator(color: Colors.white)
-            : FloatingActionButton(
-                onPressed: () {
-                  _startScan();
-                },
-                backgroundColor: Colors.deepOrangeAccent,
-                child: Icon(
-                  Icons.refresh,
-                  color: Colors.white,
+        child:
+            isScanning
+                ? CircularProgressIndicator(color: Colors.white)
+                : FloatingActionButton(
+                  onPressed: () {
+                    _startScan();
+                  },
+                  backgroundColor: Colors.deepOrangeAccent,
+                  child: Icon(Icons.refresh, color: Colors.white),
                 ),
-              ),
       ),
     );
   }

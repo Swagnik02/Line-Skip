@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:line_skip/screens/auth/login_screen.dart';
 import 'package:line_skip/screens/home/home_screen.dart';
-import 'package:line_skip/screens/profile/edit_profile_page.dart';
+import 'package:line_skip/screens/profile/edit_profile_screen.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -22,13 +22,13 @@ class AuthPage extends StatelessWidget {
           final User? user = snapshot.data;
 
           if (user!.displayName == null || user.displayName!.isEmpty) {
-            return EditProfilePage();
+            return EditProfileScreen();
           } else {
-            return const HomePage();
+            return const HomeScreen();
           }
         }
 
-        return LoginPage();
+        return LoginScreen();
       },
     );
   }

@@ -5,14 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/screens/auth/auth_service.dart';
 import 'package:line_skip/screens/auth/login_widgets.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
 
@@ -45,9 +45,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   void _showError(BuildContext context, String error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(error)),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
   }
 
   @override
@@ -119,41 +117,42 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: codeSent
-                ? OtpInput(
-                    onChangeNumber: _resetState,
-                    mobileNumber: enteredPhoneNumber,
-                    onVerifyOtp: (otp) async {
-                      if (verificationId == null) {
-                        _showError(context, 'Verification ID missing');
-                        return;
-                      }
-                      await AuthService.verifyOtp(
-                        ref: ref,
-                        verificationId: verificationId!,
-                        otp: otp,
-                        onResult: (error) {
-                          if (error != null) {
-                            _showError(context, error);
-                          } else {
-                            _resetState();
-                            // Navigate to next page
-                          }
-                        },
-                      );
-                    },
-                  )
-                : PhoneInput(
-                    onSendOtp: (phoneNumber) async {
-                      enteredPhoneNumber = phoneNumber;
-                      await AuthService.sendOtp(
-                        ref: ref,
-                        phoneNumber: phoneNumber,
-                        onCodeSent: _onCodeSent,
-                        onError: (error) => _showError(context, error),
-                      );
-                    },
-                  ),
+            child:
+                codeSent
+                    ? OtpInput(
+                      onChangeNumber: _resetState,
+                      mobileNumber: enteredPhoneNumber,
+                      onVerifyOtp: (otp) async {
+                        if (verificationId == null) {
+                          _showError(context, 'Verification ID missing');
+                          return;
+                        }
+                        await AuthService.verifyOtp(
+                          ref: ref,
+                          verificationId: verificationId!,
+                          otp: otp,
+                          onResult: (error) {
+                            if (error != null) {
+                              _showError(context, error);
+                            } else {
+                              _resetState();
+                              // Navigate to next page
+                            }
+                          },
+                        );
+                      },
+                    )
+                    : PhoneInput(
+                      onSendOtp: (phoneNumber) async {
+                        enteredPhoneNumber = phoneNumber;
+                        await AuthService.sendOtp(
+                          ref: ref,
+                          phoneNumber: phoneNumber,
+                          onCodeSent: _onCodeSent,
+                          onError: (error) => _showError(context, error),
+                        );
+                      },
+                    ),
           ),
         ),
       ],

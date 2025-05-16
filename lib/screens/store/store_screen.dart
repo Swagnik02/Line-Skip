@@ -12,14 +12,14 @@ import 'package:line_skip/widgets/custom_bottom_nav_bar.dart';
 import 'package:line_skip/widgets/store_page_widgets.dart';
 import 'package:line_skip/widgets/weight_tracker_button.dart';
 
-class StorePage extends ConsumerStatefulWidget {
-  const StorePage({super.key});
+class StoreScreen extends ConsumerStatefulWidget {
+  const StoreScreen({super.key});
 
   @override
-  ConsumerState<StorePage> createState() => _StorePageState();
+  ConsumerState<StoreScreen> createState() => _StoreScreenState();
 }
 
-class _StorePageState extends ConsumerState<StorePage> {
+class _StoreScreenState extends ConsumerState<StoreScreen> {
   bool _dialogShown = false;
 
   @override

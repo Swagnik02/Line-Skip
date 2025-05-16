@@ -9,8 +9,8 @@ import 'package:line_skip/providers/cart_provider.dart';
 import 'package:line_skip/providers/current_user_provider.dart';
 import 'package:line_skip/providers/inventory_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
-import 'package:line_skip/screens/payment/payment_confirmation_page.dart';
-import 'package:line_skip/screens/store/store_page.dart';
+import 'package:line_skip/screens/payment/payment_confirmation_screen.dart';
+import 'package:line_skip/screens/store/store_screen.dart';
 import 'package:line_skip/utils/constants.dart';
 
 Future<ReceiptModel> generateReceipt(
@@ -127,7 +127,7 @@ void navigateNextAndClean(
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(
-      builder: (context) => PaymentConfirmationPage(receipt: receipt),
+      builder: (context) => PaymentConfirmationScreen(receipt: receipt),
     ),
     ModalRoute.withName(authRoute),
   );

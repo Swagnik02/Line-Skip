@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/current_user_provider.dart';
 import 'package:line_skip/providers/store_provider.dart';
-import 'package:line_skip/screens/home/home_page_widgets.dart';
+import 'package:line_skip/screens/home/home_widgets.dart';
 import 'package:line_skip/screens/profile/profile_screen.dart';
 
-class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
