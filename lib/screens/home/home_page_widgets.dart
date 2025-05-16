@@ -8,6 +8,7 @@ import 'package:line_skip/data/models/user_model.dart';
 import 'package:line_skip/screens/store/store_detail_page.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
 import 'package:line_skip/utils/constants.dart';
+import 'package:line_skip/widgets/custom_ink_well.dart';
 import 'package:shimmer/shimmer.dart';
 
 // Home App Bar with User Greeting
@@ -58,9 +59,8 @@ class LocateStoreSearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(8.0),
-      splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+    return customInkWell(
+      borderRadius: 50,
       onTap: () {
         Navigator.push(
           context,
@@ -133,9 +133,8 @@ class QuickOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        InkWell(
-          borderRadius: BorderRadius.circular(35),
-          splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+        customInkWell(
+          borderRadius: 35,
           onTap: () {
             Navigator.pushNamed(context, route);
           },
@@ -173,9 +172,7 @@ class StoreCard extends StatelessWidget {
       height: cardWidth * 1.777,
       margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+      child: customInkWell(
         onTap: () {
           Navigator.push(
             context,

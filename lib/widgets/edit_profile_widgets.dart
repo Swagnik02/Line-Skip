@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:line_skip/widgets/custom_ink_well.dart';
 import 'package:line_skip/widgets/custom_text_fields.dart';
 
 class ProfileWindow extends StatelessWidget {
@@ -66,9 +67,8 @@ class CustomPhotoSelectionBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(8.0),
-      splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+    return customInkWell(
+      borderRadius: 12.0,
       onTap: onTap,
       child: Container(
         width: 120,

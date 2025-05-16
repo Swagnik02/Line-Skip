@@ -6,6 +6,7 @@ import 'package:line_skip/providers/receipt_provider.dart';
 import 'package:line_skip/screens/payment/view_receipt_page.dart';
 import 'package:line_skip/utils/helpers.dart';
 import 'package:line_skip/widgets/custom_app_bar.dart';
+import 'package:line_skip/widgets/custom_ink_well.dart';
 
 class ReceiptPage extends ConsumerWidget {
   const ReceiptPage({super.key});
@@ -38,10 +39,7 @@ class ReceiptPage extends ConsumerWidget {
 }
 
 class ReceiptTile extends StatelessWidget {
-  const ReceiptTile({
-    super.key,
-    required this.receipt,
-  });
+  const ReceiptTile({super.key, required this.receipt});
 
   final ReceiptModel receipt;
 
@@ -51,17 +49,14 @@ class ReceiptTile extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ViewReceiptPage(
-            receipt: receipt,
-          ),
+          builder: (context) => ViewReceiptPage(receipt: receipt),
         ),
       );
     }
 
-    return InkWell(
+    return customInkWell(
       onTap: viewReceipt,
-      borderRadius: BorderRadius.circular(8.0),
-      splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+      borderRadius: 8.0,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         decoration: BoxDecoration(
@@ -141,8 +136,10 @@ class ReceiptTile extends StatelessWidget {
             ),
             const Divider(height: 1),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 10.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -157,7 +154,9 @@ class ReceiptTile extends StatelessWidget {
                   Text(
                     formatReceiptDate(receipt.createdAt),
                     style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.bold),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),

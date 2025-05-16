@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_pickers/country_pickers.dart';
 import 'package:line_skip/widgets/custom_elevated_button.dart';
+import 'package:line_skip/widgets/custom_ink_well.dart';
 
 class PhoneInput extends StatefulWidget {
   final Function(String phoneNumber) onSendOtp;
@@ -113,9 +114,8 @@ class _PhoneInputState extends State<PhoneInput> {
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
             hintText: 'Enter phone number',
-            prefixIcon: InkWell(
-              borderRadius: BorderRadius.circular(8.0),
-              splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+            prefixIcon: customInkWell(
+              borderRadius: 8.0,
               onTap: _openCountryPicker,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -279,9 +279,8 @@ class _OtpInputState extends State<OtpInput> {
           children: [
             const Text('Didn\'t get the code?', style: TextStyle(fontSize: 16)),
             const SizedBox(width: 6),
-            InkWell(
-              borderRadius: BorderRadius.circular(8.0),
-              splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+            customInkWell(
+              borderRadius: 8.0,
               onTap: _resendCode,
               child: const Text(
                 'Resend Code',
@@ -302,9 +301,8 @@ class _OtpInputState extends State<OtpInput> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(width: 6),
-            InkWell(
-              borderRadius: BorderRadius.circular(8.0),
-              splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+            customInkWell(
+              borderRadius: 8.0,
               onTap: widget.onChangeNumber,
               child: const Text(
                 'Edit Number',

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_skip/providers/ble_provider.dart';
 import 'package:line_skip/providers/cart_provider.dart';
+import 'package:line_skip/widgets/custom_ink_well.dart';
 
 InkWell weightTrackerButton(WidgetRef ref, BuildContext context) {
-  return InkWell(
-    borderRadius: BorderRadius.circular(8.0),
-    splashColor: Colors.deepOrangeAccent.shade100.withOpacity(0.2),
+  return customInkWell(
+    borderRadius: 8.0,
     onTap: () => _openWeightTracker(context, ref),
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
