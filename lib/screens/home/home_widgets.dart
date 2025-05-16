@@ -9,7 +9,7 @@ import 'package:line_skip/screens/store/store_detail_page.dart';
 import 'package:line_skip/screens/store/store_selection_screen.dart';
 import 'package:line_skip/utils/constants.dart';
 import 'package:line_skip/widgets/custom_ink_well.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:line_skip/widgets/shimmers.dart';
 
 // Home App Bar with User Greeting
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -159,6 +159,41 @@ class QuickOption extends StatelessWidget {
   }
 }
 
+// Quick Options Section
+class QuickOptions extends StatelessWidget {
+  const QuickOptions({super.key});
+
+  static const options = [
+    {
+      "icon": Icons.leaderboard_sharp,
+      "title": "Best Places",
+      "route": bestPlacesRoute,
+    },
+    {
+      "icon": Icons.star_rounded,
+      "title": "Favourites",
+      "route": favouritesRoute,
+    },
+    {"icon": Icons.receipt_long, "title": "Bills", "route": allBillsRoute},
+    {"icon": Icons.local_offer, "title": "Promos", "route": promosRoute},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children:
+          options.map((option) {
+            return QuickOption(
+              icon: option["icon"] as IconData,
+              title: option["title"] as String,
+              route: option["route"] as String,
+            );
+          }).toList(),
+    );
+  }
+}
+
 class StoreCard extends StatelessWidget {
   final Store store;
 
@@ -167,10 +202,12 @@ class StoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardWidth = MediaQuery.of(context).size.width * 0.7;
+    final imageWidth = cardWidth - 16;
+    final textBoxWidth = cardWidth - 24;
     return Container(
       width: cardWidth,
       height: cardWidth * 1.777,
-      margin: const EdgeInsets.only(right: 16),
+      // margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
       child: customInkWell(
         onTap: () {
@@ -195,11 +232,7 @@ class StoreCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
-                  return Shimmer.fromColors(
-                    baseColor: Colors.deepOrange.shade100,
-                    highlightColor: Colors.grey.shade100,
-                    child: Container(width: cardWidth, color: Colors.white),
-                  );
+                  return ImageShimmer(cardWidth: cardWidth);
                 },
                 errorBuilder: (_, __, ___) => const Icon(Icons.error),
               ),
@@ -216,7 +249,7 @@ class StoreCard extends StatelessWidget {
                       horizontal: 10,
                       vertical: 8,
                     ),
-                    width: MediaQuery.of(context).size.width * 0.7 - 16,
+                    width: imageWidth,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [
@@ -232,7 +265,7 @@ class StoreCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.7 - 24,
+                          width: textBoxWidth,
                           child: Text(
                             store.name,
                             style: Theme.of(
@@ -278,42 +311,6 @@ class StoreCard extends StatelessWidget {
   }
 }
 
-// Quick Options Section
-class QuickOptions extends StatelessWidget {
-  const QuickOptions({super.key});
-
-  static const options = [
-    {
-      "icon": Icons.leaderboard_sharp,
-      "title": "Best Places",
-      "route": bestPlacesRoute,
-    },
-    {
-      "icon": Icons.star_rounded,
-      "title": "Favourites",
-      "route": favouritesRoute,
-    },
-    {"icon": Icons.receipt_long, "title": "Bills", "route": allBillsRoute},
-    {"icon": Icons.local_offer, "title": "Promos", "route": promosRoute},
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children:
-          options.map((option) {
-            return QuickOption(
-              icon: option["icon"] as IconData,
-              title: option["title"] as String,
-              route: option["route"] as String,
-            );
-          }).toList(),
-    );
-  }
-}
-
-// Display Available Stores
 class AvailableStores extends StatelessWidget {
   final AsyncValue<List<Store>> storeState;
   const AvailableStores({super.key, required this.storeState});
@@ -322,31 +319,19 @@ class AvailableStores extends StatelessWidget {
   Widget build(BuildContext context) {
     return storeState.when(
       loading:
-          () => ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          () => PageView.builder(
+            controller: PageController(viewportFraction: 0.75, initialPage: 1),
             itemCount: 3,
-            itemBuilder:
-                (context, index) => Shimmer.fromColors(
-                  baseColor: Colors.deepOrange.shade300,
-                  highlightColor: Colors.grey.shade100,
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 16),
-                    width: 0.7 * MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+            itemBuilder: (context, index) => ShimmerStoreCard(),
           ),
       error: (err, _) => Center(child: Text("Error: $err")),
       data:
-          (stores) => ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          (stores) => PageView.builder(
+            controller: PageController(viewportFraction: 0.75, initialPage: 1),
             itemCount: stores.length,
-            itemBuilder: (context, index) => StoreCard(store: stores[index]),
+            itemBuilder: (context, index) {
+              return StoreCard(store: stores[index]);
+            },
           ),
     );
   }
