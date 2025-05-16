@@ -6,27 +6,30 @@ import 'package:line_skip/widgets/line_skip_text.dart';
 
 class ViewReceiptPage extends StatelessWidget {
   final ReceiptModel receipt;
+
   const ViewReceiptPage({super.key, required this.receipt});
 
   @override
   Widget build(BuildContext context) {
-    final dateFormatted = DateFormat('dd-MM-yyyy').format(receipt.createdAt);
+    final dateFormatted = DateFormat('dd MMM yyyy').format(receipt.createdAt);
 
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Stack(
           children: [
             SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // header
-                  _buildSection(
+                  // Header
+                  _buildCard(
                     Column(
                       children: [
                         lineSkip1("Line Skip"),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                         const Text(
                           "AzApps",
                           style: TextStyle(fontWeight: FontWeight.w500),
@@ -34,8 +37,9 @@ class ViewReceiptPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Thanks Giving
-                  _buildSection(
+
+                  // Thank you and customer info
+                  _buildCard(
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -47,22 +51,24 @@ class ViewReceiptPage extends StatelessWidget {
                         Row(
                           children: [
                             Text(receipt.user.name, style: boldStyle),
-                            Spacer(),
+                            const Spacer(),
                             _iconRow(Icons.phone, receipt.user.phoneNumber),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  // Store and Owner Details
-                  _buildSection(
+
+                  // Store & Owner details
+                  _buildCard(
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [_buildStoreDetails(), _buildOwnerDetails()],
                     ),
                   ),
-                  // Total Amount and Date
-                  _buildSection(
+
+                  // Amount & Date
+                  _buildCard(
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -85,12 +91,15 @@ class ViewReceiptPage extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(dateFormatted),
+                            Text(
+                              dateFormatted,
+                              style: const TextStyle(color: Colors.grey),
+                            ),
                             const SizedBox(height: 4),
                             Text(
                               "Qty: ${receipt.items.length}",
                               style: const TextStyle(
-                                fontSize: 22,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -99,74 +108,66 @@ class ViewReceiptPage extends StatelessWidget {
                       ],
                     ),
                   ),
+
                   // Invoice ID
-                  _buildAltSection(
-                    Row(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 4,
+                    ),
+                    child: Row(
                       children: [
                         const Text("Invoice ", style: boldStyle),
                         Text("#${receipt.receiptId}"),
                       ],
                     ),
                   ),
+
                   // Item List
-                  _buildItemSection([
-                    ...receipt.items.asMap().entries.map(
-                      (entry) => _buildItemTile(entry.value, entry.key),
+                  _buildCard(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (var entry in receipt.items.asMap().entries)
+                          _buildItemTile(entry.value, entry.key),
+                        const Divider(thickness: 0.8),
+                        _buildSummary(),
+                      ],
                     ),
-                    _buildItemTileContainer('   ', [
-                      _buildRowItemList(
-                        'Total Amount',
-                        '₹ ${receipt.invoiceTotal.toStringAsFixed(2)}',
-                      ),
-                      const SizedBox(height: 4),
-                      _buildRowItemList(
-                        receipt.transactionDetails.upiApplication,
-                        receipt.transactionDetails.transactionId,
-                      ),
-                    ]),
-                  ]),
+                  ),
                 ],
               ),
             ),
+
+            // Close button
             Positioned(
               top: 8,
               right: 8,
-              child: IconButton(
-                icon: Icon(Icons.close_rounded),
-                onPressed: () => Navigator.pop(context),
-                color: Colors.white,
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(
-                    Colors.deepOrangeAccent,
-                  ),
+              child: CircleAvatar(
+                backgroundColor: Colors.deepOrangeAccent,
+                child: IconButton(
+                  icon: const Icon(Icons.close_rounded, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
                 ),
               ),
             ),
           ],
         ),
       ),
-
-      // bottomNavigationBar: Padding(
-      //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      //   child: FilledButton(
-      //     style: FilledButton.styleFrom(
-      //       shape: RoundedRectangleBorder(
-      //         borderRadius: BorderRadius.circular(8),
-      //       ),
-      //       backgroundColor: Colors.deepOrangeAccent,
-      //       foregroundColor: Colors.white,
-      //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      //     ),
-      //     onPressed: () {
-      //       // Handle invoice download
-      //     },
-      //     child: const Text("Download Invoice"),
-      //   ),
-      // ),
     );
   }
 
   static const boldStyle = TextStyle(fontWeight: FontWeight.bold);
+
+  Widget _iconRow(IconData icon, String text, {double fontSize = 14}) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.deepOrangeAccent),
+        const SizedBox(width: 4),
+        Text(text, style: TextStyle(fontSize: fontSize)),
+      ],
+    );
+  }
 
   Widget _buildStoreDetails() {
     return Column(
@@ -174,11 +175,7 @@ class ViewReceiptPage extends StatelessWidget {
       children: [
         _iconRow(Icons.store, receipt.store.name, fontSize: 16),
         const SizedBox(height: 4),
-        _iconRow(
-          Icons.location_on_rounded,
-          receipt.store.location,
-          fontSize: 14,
-        ),
+        _iconRow(Icons.location_on, receipt.store.location, fontSize: 14),
       ],
     );
   }
@@ -190,16 +187,6 @@ class ViewReceiptPage extends StatelessWidget {
         _iconRow(Icons.person, receipt.store.ownerName, fontSize: 16),
         const SizedBox(height: 4),
         _iconRow(Icons.phone, receipt.store.mobileNumber, fontSize: 14),
-      ],
-    );
-  }
-
-  Widget _iconRow(IconData icon, String text, {double fontSize = 14}) {
-    return Row(
-      children: [
-        Icon(icon, size: 16),
-        const SizedBox(width: 4),
-        Text(text, style: TextStyle(fontSize: fontSize)),
       ],
     );
   }
@@ -248,52 +235,60 @@ class ViewReceiptPage extends StatelessWidget {
     );
   }
 
-  Container _buildSection(Widget child) {
+  Widget _buildSummary() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _rowLine("Total Amount", "₹${receipt.invoiceTotal.toStringAsFixed(2)}"),
+        const SizedBox(height: 4),
+        _rowLine(
+          receipt.transactionDetails.upiApplication,
+          receipt.transactionDetails.transactionId,
+        ),
+      ],
+    );
+  }
+
+  Widget _rowLine(String left, String right, {bool highlight = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            left,
+            style: TextStyle(
+              fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          Text(
+            right,
+            style: TextStyle(
+              fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard(Widget child) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: child,
-    );
-  }
-
-  Container _buildAltSection(Widget child) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      width: double.infinity,
-      child: child,
-    );
-  }
-
-  Widget _buildItemSection(List<Widget> children) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(children: children),
     );
   }
 }
